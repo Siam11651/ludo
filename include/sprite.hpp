@@ -5,25 +5,28 @@
 #include <cstdint>
 #include <glad/glad.h>
 
-class sprite
+namespace ludo
 {
-private:
-    int32_t m_width;
-    int32_t m_height;
-    uint8_t *m_data;
-    GLuint m_texture;
-    static std::string vertshader_source_str;
-    static std::string fragshader_source_str;
-    static GLuint s_vertex_buffer_object;
-    static GLuint s_vertex_array_object;
-    static GLuint s_element_buffer_object;
-    static GLuint s_shader_program;
+    class sprite
+    {
+    private:
+        int32_t m_width;
+        int32_t m_height;
+        uint8_t *m_data;
+        GLuint m_texture;
+        static std::string vertshader_source_str;
+        static std::string fragshader_source_str;
+        static GLuint s_vertex_buffer_object;
+        static GLuint s_vertex_array_object;
+        static GLuint s_element_buffer_object;
+        static GLuint s_shader_program;
 
-public:
-    sprite(const std::string &filepath);
-    void draw() const;
-    ~sprite();
-    static void initialise();
-};
+    public:
+        sprite(const std::string &_filepath);
+        void draw() const;
+        ~sprite();
+        static void initialise();
+    };
+}
 
 #endif

@@ -5,11 +5,14 @@ include(CTest)
 enable_testing()
 
 find_package(glfw3 REQUIRED)
+find_package(glm REQUIRED)
 
 add_executable(ludo
     "src/glad/glad.c"
     "src/main.cpp"
+    "src/scene.cpp"
     "src/screen.cpp"
+    "src/space.cpp"
     "src/sprite.cpp"
 )
 
@@ -19,6 +22,7 @@ target_include_directories(ludo PRIVATE
 
 target_link_libraries(ludo
     glfw
+    glm
 )
 
 add_custom_command(TARGET ludo POST_BUILD

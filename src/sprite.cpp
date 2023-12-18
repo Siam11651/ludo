@@ -7,10 +7,10 @@
 
 #include <stb_image/stb_image.h>
 
-GLuint sprite::s_vertex_buffer_object;
-GLuint sprite::s_vertex_array_object;
-GLuint sprite::s_element_buffer_object;
-GLuint sprite::s_shader_program;
+GLuint ludo::sprite::s_vertex_buffer_object;
+GLuint ludo::sprite::s_vertex_array_object;
+GLuint ludo::sprite::s_element_buffer_object;
+GLuint ludo::sprite::s_shader_program;
 std::string vertshader_source =
 R"(
 #version 460 core
@@ -39,10 +39,10 @@ void main()
 }
 )";
 
-sprite::sprite(const std::string &filepath)
+ludo::sprite::sprite(const std::string &_filepath)
 {
     int32_t channel_count;
-    m_data = stbi_load(filepath.c_str(), &m_width, &m_height, &channel_count, 0);
+    m_data = stbi_load(_filepath.c_str(), &m_width, &m_height, &channel_count, 0);
     
     glGenTextures(1, &m_texture);
     glBindTexture(GL_TEXTURE_2D, m_texture);
@@ -59,18 +59,18 @@ sprite::sprite(const std::string &filepath)
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void sprite::draw() const
+void ludo::sprite::draw() const
 {
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
-sprite::~sprite()
+ludo::sprite::~sprite()
 {
     stbi_image_free(m_data);
 }
 
-void sprite::initialise()
+void ludo::sprite::initialise()
 {
     const char *vertshader_source_cstr = vertshader_source.c_str();
     const char *fragshader_source_cstr = fragshader_source.c_str();

@@ -40,15 +40,11 @@ int main()
         return -1;
     }
 
-    sprite::initialise();
-
-    sprite board("assets/board.png");
+    ludo::sprite::initialise();
 
     while(!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
-
-        board.draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
