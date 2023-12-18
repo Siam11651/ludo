@@ -22,7 +22,6 @@ target_include_directories(ludo PRIVATE
 
 target_link_libraries(ludo
     glfw
-    glm
 )
 
 add_custom_command(TARGET ludo POST_BUILD

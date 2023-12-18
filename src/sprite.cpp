@@ -59,7 +59,7 @@ ludo::sprite::sprite(const std::string &_filepath)
     glGenerateMipmap(GL_TEXTURE_2D);
 }
 
-void ludo::sprite::draw() const
+void ludo::sprite::draw(const glm::mat4x4 &_global_transform) const
 {
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

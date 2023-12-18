@@ -34,6 +34,7 @@ namespace ludo
         void set_sprite(ludo::sprite *_sprite_ptr);
         std::vector<game_object *> &children_ptrs();
         const std::vector<game_object *> &const_children_ptrs() const;
+        void draw(glm::mat4x4 &_global_transform) const;
     };
 
     class scene

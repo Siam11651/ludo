@@ -1,6 +1,7 @@
 #ifndef SPRITE_H
 #define SPRITE_H
 
+#include <glm/glm.hpp>
 #include <string>
 #include <cstdint>
 #include <glad/glad.h>
@@ -23,7 +24,7 @@ namespace ludo
 
     public:
         sprite(const std::string &_filepath);
-        void draw() const;
+        void draw(const glm::mat4x4 &_global_transform) const;
         ~sprite();
         static void initialise();
     };

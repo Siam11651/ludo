@@ -46,3 +46,11 @@ const std::vector<ludo::game_object *> &ludo::game_object::const_children_ptrs()
 {
     return m_children_ptrs;
 }
+
+void ludo::game_object::draw(glm::mat4x4 &_global_transform) const
+{
+    if(m_sprite_ptr)
+    {
+        m_sprite_ptr->draw(_global_transform);
+    }
+}
