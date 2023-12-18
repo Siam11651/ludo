@@ -65,17 +65,17 @@ void ludo::game_object::draw(glm::mat4x4 &_global_transform) const
         };
         const glm::mat4x4 rotation_mat
         {
-            {rotation_cos, -rotation_sin, 0.0f, 0.0f},
-            {rotation_sin, rotation_cos, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 1.0f}
+            {rotation_cos,  -rotation_sin,  0.0f,   0.0f},
+            {rotation_sin,  rotation_cos,   0.0f,   0.0f},
+            {0.0f,          0.0f,           1.0f,   0.0f},
+            {0.0f,          0.0f,           0.0f,   1.0f}
         };
         const glm::mat4x4 scale_mat
         {
-            {scale.x, 0.0f, 0.0f, 0.0f},
-            {0.0f, scale.y, 0.0f, 0.0f},
-            {0.0f, 0.0f, 1.0f, 0.0f},
-            {0.0f, 0.0f, 0.0f, 1.0f}
+            {scale.x,   0.0f,       0.0f, 0.0f},
+            {0.0f,      scale.y,    0.0f, 0.0f},
+            {0.0f,      0.0f,       1.0f, 0.0f},
+            {0.0f,      0.0f,       0.0f, 1.0f}
         };
         glm::mat4x4 new_global_transform = _global_transform * translation_mat * rotation_mat * scale_mat;
 
