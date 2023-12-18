@@ -54,17 +54,29 @@ void ludo::game_object::draw(glm::mat4x4 &_global_transform) const
         const glm::vec2 &position = m_local_transform.const_position();
         const float &rotation = m_local_transform.const_rotation();
         const glm::vec2 &scale = m_local_transform.const_scale();
-        glm::mat4x4 translation_mat(1.0f);
-        translation_mat[0][3] = position.x;
-        translation_mat[1][3] = position.y;
-        glm::mat4x4 rotation_mat(1.0f);
-        rotation_mat[0][0] = std::cos(rotation);
-        rotation_mat[0][1] = -std::sin(rotation);
-        rotation_mat[1][0] = std::sin(rotation);
-        rotation_mat[1][1] = -std::cos(rotation);
-        glm::mat4x4 scale_mat(1.0f);
-        scale_mat[0][0] = scale.x;
-        scale_mat[1][1] = scale.y;
+        const float rotation_sin = std::sin(rotation);
+        const float rotation_cos = std::cos(rotation);
+        const glm::mat4x4 translation_mat
+        {
+            {1.0f, 0.0f, 0.0f, position.x},
+            {0.0f, 1.0f, 0.0f, position.y},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f}
+        };
+        const glm::mat4x4 rotation_mat
+        {
+            {rotation_cos, -rotation_sin, 0.0f, 0.0f},
+            {rotation_sin, rotation_cos, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f}
+        };
+        const glm::mat4x4 scale_mat
+        {
+            {scale.x, 0.0f, 0.0f, 0.0f},
+            {0.0f, scale.y, 0.0f, 0.0f},
+            {0.0f, 0.0f, 1.0f, 0.0f},
+            {0.0f, 0.0f, 0.0f, 1.0f}
+        };
         glm::mat4x4 new_global_transform = _global_transform * translation_mat * rotation_mat * scale_mat;
 
         m_sprite_ptr->draw(new_global_transform);
