@@ -51,6 +51,22 @@ void ludo::game_object::draw(glm::mat4x4 &_global_transform) const
 {
     if(m_sprite_ptr)
     {
-        m_sprite_ptr->draw(_global_transform);
+        const glm::vec2 &position = m_local_transform.const_position();
+        const float &rotation = m_local_transform.const_rotation();
+        const glm::vec2 &scale = m_local_transform.const_scale();
+        glm::mat4x4 translation_mat(1.0f);
+        translation_mat[0][3] = position.x;
+        translation_mat[1][3] = position.y;
+        glm::mat4x4 rotation_mat(1.0f);
+        rotation_mat[0][0] = std::cos(rotation);
+        rotation_mat[0][1] = -std::sin(rotation);
+        rotation_mat[1][0] = std::sin(rotation);
+        rotation_mat[1][1] = -std::cos(rotation);
+        glm::mat4x4 scale_mat(1.0f);
+        scale_mat[0][0] = scale.x;
+        scale_mat[1][1] = scale.y;
+        glm::mat4x4 new_global_transform = _global_transform * translation_mat * rotation_mat * scale_mat;
+
+        m_sprite_ptr->draw(new_global_transform);
     }
 }
