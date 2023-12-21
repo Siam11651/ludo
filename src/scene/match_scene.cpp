@@ -2,7 +2,13 @@
 
 ludo::match_scene::match_scene()
 {
+    m_board_sprite.setup_sprite("assets/board.png");
+    m_board.set_sprite_ptr(&m_board_sprite);
 
+    m_gameobject_ptrs.insert(m_gameobject_ptrs.end(),
+    {
+        &m_board
+    });
 }
 
 void ludo::match_scene::on_update()

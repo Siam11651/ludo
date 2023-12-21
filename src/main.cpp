@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <screen.hpp>
 #include <sprite.hpp>
+#include <scene/match_scene.hpp>
 
 int main()
 {
@@ -42,10 +43,12 @@ int main()
 
     ludo::sprite::initialise();
 
+    ludo::scene *current_scene = new ludo::match_scene();
+
     while(!glfwWindowShouldClose(window))
     {
         glClear(GL_COLOR_BUFFER_BIT);
-
+        current_scene->draw();
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

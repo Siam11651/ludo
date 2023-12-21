@@ -39,7 +39,17 @@ void main()
 }
 )";
 
+ludo::sprite::sprite()
+{
+
+}
+
 ludo::sprite::sprite(const std::string &_filepath)
+{
+    setup_sprite(_filepath);
+}
+
+void ludo::sprite::setup_sprite(const std::string &_filepath)
 {
     int32_t channel_count;
     m_data = stbi_load(_filepath.c_str(), &m_width, &m_height, &channel_count, 0);

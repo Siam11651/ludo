@@ -7,6 +7,10 @@ namespace ludo
 {
     class match_scene : public scene
     {
+    private:
+        ludo::sprite m_board_sprite;
+        ludo::gameobject m_board;
+
     public:
         match_scene();
         void on_update();

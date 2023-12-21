@@ -23,7 +23,9 @@ namespace ludo
         static GLuint s_shader_program;
 
     public:
+        sprite();
         sprite(const std::string &_filepath);
+        void setup_sprite(const std::string &_filepath);
         void draw(const glm::mat4x4 &_global_transform) const;
         ~sprite();
         static void initialise();

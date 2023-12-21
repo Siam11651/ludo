@@ -43,12 +43,12 @@ const ludo::transform &ludo::gameobject::const_local_transform() const
     return m_local_transform;
 }
 
-ludo::sprite *ludo::gameobject::get_sprite() const
+ludo::sprite *ludo::gameobject::get_sprite_ptr() const
 {
     return m_sprite_ptr;
 }
 
-void ludo::gameobject::set_sprite(ludo::sprite *_sprite_ptr)
+void ludo::gameobject::set_sprite_ptr(ludo::sprite *_sprite_ptr)
 {
     m_sprite_ptr = _sprite_ptr;
 }

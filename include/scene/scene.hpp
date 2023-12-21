@@ -33,8 +33,8 @@ namespace ludo
         gameobject();
         ludo::transform &local_transform();
         const ludo::transform &const_local_transform() const;
-        ludo::sprite *get_sprite() const;
-        void set_sprite(ludo::sprite *_sprite_ptr);
+        ludo::sprite *get_sprite_ptr() const;
+        void set_sprite_ptr(ludo::sprite *_sprite_ptr);
         std::vector<ludo::gameobject *> &children_ptrs();
         const std::vector<ludo::gameobject *> &const_children_ptrs() const;
         void draw(const glm::mat4x4 &_global_transform) const;
@@ -42,7 +42,7 @@ namespace ludo
 
     class scene
     {
-    private:
+    protected:
         ludo::camera m_camera;
         glm::mat4x4 projection;
         std::vector<ludo::gameobject *> m_gameobject_ptrs;
