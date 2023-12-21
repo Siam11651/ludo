@@ -6,6 +6,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb_image/stb_image.h>
+#include <glm/gtc/type_ptr.hpp>
 
 std::string vertshader_source =
 R"(
@@ -14,10 +15,11 @@ R"(
 layout (location = 0) in vec3 in_pos;
 layout (location = 1) in vec2 in_tex_coord;
 out vec2 tex_coord;
+uniform mat4 transform;
 
 void main()
 {
-    gl_Position = vec4(in_pos, 1.0f);
+    gl_Position = transform * vec4(in_pos, 1.0f);
     tex_coord = in_tex_coord;
 }
 )";
@@ -40,10 +42,7 @@ GLuint ludo::sprite::s_element_buffer_object;
 GLuint ludo::sprite::s_shader_program;
 GLuint ludo::sprite::s_transform_uniform_location;
 
-ludo::sprite::sprite()
-{
-
-}
+ludo::sprite::sprite() {}
 
 ludo::sprite::sprite(const std::string &_filepath)
 {
@@ -72,6 +71,7 @@ void ludo::sprite::setup_sprite(const std::string &_filepath)
 
 void ludo::sprite::draw(const glm::mat4x4 &_global_transform) const
 {
+    glUniformMatrix4fv(s_transform_uniform_location, 1, GL_FALSE, glm::value_ptr(_global_transform));
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

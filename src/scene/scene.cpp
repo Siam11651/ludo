@@ -2,14 +2,15 @@
 #include <screen.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include <iostream>
 
 ludo::camera::camera() :
     m_transform(glm::vec3(0.0f, 0.0f, 1.0f), glm::quat(), glm::vec3(1.0f)),
-    m_projection(glm::perspective(45.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
+    m_projection(glm::perspective(glm::radians(45.0f), screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
 ludo::camera::camera(const ludo::transform &_transform) :
     m_transform(_transform),
-    m_projection(glm::perspective(45.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
+    m_projection(glm::perspective(90.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
 ludo::transform &ludo::camera::transform()
 {
@@ -109,7 +110,7 @@ void ludo::scene::draw() const
     const glm::vec3 &position = m_camera.const_transform().const_position();
     const glm::quat &rotation = m_camera.const_transform().const_rotation();
     const glm::mat4x4 &rotation_mat = glm::toMat4(rotation);
-    const glm::vec3 forward = rotation_mat * glm::vec4({1.0f, 0.0f, 0.0f, 1.0f});
+    const glm::vec3 forward = rotation_mat * glm::vec4({0.0f, 0.0f, -1.0f, 1.0f});
     const glm::vec3 up = rotation_mat * glm::vec4({0.0f, 1.0f, 0.0f, 1.0f});
     const glm::mat4x4 view = glm::lookAt(position, position + forward, up);
     const glm::mat4x4 pxv = m_camera.const_projection() * view;
