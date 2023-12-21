@@ -21,6 +21,7 @@ namespace ludo
         static GLuint s_vertex_array_object;
         static GLuint s_element_buffer_object;
         static GLuint s_shader_program;
+        static GLuint s_transform_uniform_location;
 
     public:
         sprite();

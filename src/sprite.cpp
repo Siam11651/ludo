@@ -7,10 +7,6 @@
 
 #include <stb_image/stb_image.h>
 
-GLuint ludo::sprite::s_vertex_buffer_object;
-GLuint ludo::sprite::s_vertex_array_object;
-GLuint ludo::sprite::s_element_buffer_object;
-GLuint ludo::sprite::s_shader_program;
 std::string vertshader_source =
 R"(
 #version 460 core
@@ -38,6 +34,11 @@ void main()
     frag_color = texture(tex_sampler, tex_coord);
 }
 )";
+GLuint ludo::sprite::s_vertex_buffer_object;
+GLuint ludo::sprite::s_vertex_array_object;
+GLuint ludo::sprite::s_element_buffer_object;
+GLuint ludo::sprite::s_shader_program;
+GLuint ludo::sprite::s_transform_uniform_location;
 
 ludo::sprite::sprite()
 {
@@ -135,6 +136,8 @@ void ludo::sprite::initialise()
     glDeleteShader(vertshader);
     glDeleteShader(fragshader);
     glUseProgram(s_shader_program);
+
+    s_transform_uniform_location = glGetUniformLocation(s_shader_program, "transform");
 
     const GLfloat vertices[] =
     {
