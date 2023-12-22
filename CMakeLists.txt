@@ -13,6 +13,7 @@ add_executable(ludo
     "src/main.cpp"
     "src/scene/match_scene.cpp"
     "src/scene/scene.cpp"
+    "src/scene/test_scene.cpp"
     "src/screen.cpp"
     "src/space.cpp"
     "src/sprite.cpp"

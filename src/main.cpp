@@ -5,6 +5,7 @@
 #include <time.hpp>
 #include <sprite.hpp>
 #include <animation.hpp>
+#include <scene/test_scene.hpp>
 #include <scene/match_scene.hpp>
 
 int main()
@@ -49,6 +50,7 @@ int main()
     ludo::sprite::initialise();
 
     ludo::scene *current_scene = new ludo::match_scene();
+    // ludo::scene *current_scene = new ludo::test_scene();
 
     while(!glfwWindowShouldClose(window))
     {
@@ -60,7 +62,7 @@ int main()
         current_scene->on_late_update();
         glfwSwapBuffers(window);
         glfwPollEvents();
-        ludo::time::start_frame();
+        ludo::time::end_frame();
     }
 
     return 0;
