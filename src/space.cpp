@@ -2,6 +2,7 @@
 
 ludo::transform::transform() : 
     m_position(0.0f, 0.0f, 0.0f),
+    m_rotation(1.0f, 0.0f, 0.0f, 0.0f),
     m_scale(1.0f, 1.0f, 1.0f) {}
 
 ludo::transform::transform(const glm::vec3 &_position, const glm::quat &_rotation, const glm::vec3 &_scale) :

@@ -9,7 +9,9 @@ namespace ludo
     {
     private:
         ludo::sprite m_board_sprite;
+        ludo::sprite m_coin_red_sprite;
         ludo::gameobject m_board;
+        ludo::gameobject m_coin_red;
 
     public:
         match_scene();
