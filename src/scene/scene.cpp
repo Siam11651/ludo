@@ -71,23 +71,10 @@ void ludo::gameobject::draw(const glm::mat4x4 &_global_transform) const
         const glm::vec3 &position = m_local_transform.const_position();
         const glm::quat &rotation = m_local_transform.const_rotation();
         const glm::vec3 &scale = m_local_transform.const_scale();
-        const glm::mat4x4 local_translation
-        {
-            {1.0f, 0.0f, 0.0f, position.x},
-            {0.0f, 1.0f, 0.0f, position.y},
-            {0.0f, 0.0f, 1.0f, position.z},
-            {0.0f, 0.0f, 0.0f, 1.0f}
-        };
-        const glm::mat4x4 local_rotation = glm::toMat4(rotation);
-        const glm::mat4x4 local_scale
-        {
-            {scale.x,   0.0f,       0.0f,       0.0f},
-            {0.0f,      scale.y,    0.0f,       0.0f},
-            {0.0f,      0.0f,       scale.z,    0.0f},
-            {0.0f,      0.0f,       0.0f,       1.0f}
-        };
-        glm::mat4x4 new_global_transform = _global_transform * local_translation * local_rotation
-            * local_scale;
+        glm::mat4x4 local_transform = glm::translate(glm::identity<glm::mat4x4>(), position);
+        local_transform *= glm::toMat4(rotation);
+        local_transform = glm::scale(local_transform, scale);
+        const glm::mat4x4 new_global_transform = _global_transform * local_transform;
 
         m_sprite_ptr->draw(new_global_transform);
     }
