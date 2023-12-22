@@ -33,7 +33,14 @@ uniform sampler2D tex_sampler;
 
 void main()
 {
-    frag_color = texture(tex_sampler, tex_coord);
+    vec4 tex_color = texture(tex_sampler, tex_coord);
+    
+    if(tex_color.a == 0)
+    {
+        discard;
+    }
+
+    frag_color = tex_color;
 }
 )";
 GLuint ludo::sprite::s_vertex_buffer_object;
@@ -56,6 +63,8 @@ void ludo::sprite::setup_sprite(const std::string &_filepath)
     
     glGenTextures(1, &m_texture);
     glBindTexture(GL_TEXTURE_2D, m_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     if(channel_count == 3)
     {

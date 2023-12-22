@@ -8,7 +8,9 @@ ludo::match_scene::match_scene() :
     m_board.set_sprite_ptr(&m_board_sprite);
     m_coin_red.set_sprite_ptr(&m_coin_red_sprite);
     m_coin_red.local_transform().position().z = 0.01f;
-    m_coin_red.local_transform().scale() /= 15.0f;
+    m_coin_red.local_transform().position().x = -1.0f + 4.0f / 15.0f;
+    m_coin_red.local_transform().position().y = -1.0f + 4.0f / 15.0f;
+    m_coin_red.local_transform().scale() /= 20.0f;
     m_camera.transform().position().z = 3.5f;
 
     m_gameobject_ptrs.insert(m_gameobject_ptrs.end(),
