@@ -2,7 +2,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <screen.hpp>
+#include <time.hpp>
 #include <sprite.hpp>
+#include <animation.hpp>
 #include <scene/match_scene.hpp>
 
 int main()
@@ -50,10 +52,15 @@ int main()
 
     while(!glfwWindowShouldClose(window))
     {
+        ludo::time::start_frame();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        current_scene->on_update();
+        ludo::animation::animate();
         current_scene->draw();
+        current_scene->on_late_update();
         glfwSwapBuffers(window);
         glfwPollEvents();
+        ludo::time::start_frame();
     }
 
     return 0;
