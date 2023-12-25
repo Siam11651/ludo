@@ -11,6 +11,7 @@ add_executable(ludo
     "src/glad/glad.c"
     "src/animation.cpp"
     "src/board.cpp"
+    "src/input.cpp"
     "src/main.cpp"
     "src/scene/match_scene.cpp"
     "src/scene/scene.cpp"

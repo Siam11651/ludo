@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <screen.hpp>
 #include <time.hpp>
+#include <input.hpp>
 #include <sprite.hpp>
 #include <animation.hpp>
 #include <scene/test_scene.hpp>
@@ -51,17 +52,27 @@ int main()
 
     ludo::scene *current_scene = new ludo::match_scene();
     // ludo::scene *current_scene = new ludo::test_scene();
+    double mouse_pos_x;
+    double mouse_pos_y;
 
     while(!glfwWindowShouldClose(window))
     {
         ludo::time::start_frame();
+        glfwPollEvents();
+        glfwGetCursorPos(window, &mouse_pos_x, &mouse_pos_y);
+
+        int32_t mouse_left_status = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+        ludo::input::mouse new_mouse;
+        new_mouse.position() = glm::vec2(mouse_pos_x, mouse_pos_y);
+
+        ludo::input::set_key(ludo::input::key::mouse_left, (ludo::input::status)mouse_left_status);
+        ludo::input::set_mouse(new_mouse);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         current_scene->on_update();
         ludo::animation::animate();
         current_scene->draw();
         current_scene->on_late_update();
         glfwSwapBuffers(window);
-        glfwPollEvents();
         ludo::time::end_frame();
     }
 

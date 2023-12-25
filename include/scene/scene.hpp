@@ -25,12 +25,15 @@ namespace ludo
     class gameobject
     {
     private:
+        bool m_active;
         ludo::transform m_local_transform;
         ludo::sprite *m_sprite_ptr;
         std::vector<ludo::gameobject *> m_children_ptrs;
 
     public:
         gameobject();
+        bool &active();
+        const bool &const_active() const;
         ludo::transform &local_transform();
         const ludo::transform &const_local_transform() const;
         ludo::sprite *get_sprite_ptr() const;

@@ -32,7 +32,18 @@ const glm::mat4x4 &ludo::camera::const_projection() const
     return m_projection;
 }
 
-ludo::gameobject::gameobject() {}
+ludo::gameobject::gameobject() :
+    m_active(true) {}
+
+bool &ludo::gameobject::active()
+{
+    return m_active;
+}
+
+const bool &ludo::gameobject::const_active() const
+{
+    return m_active;
+}
 
 ludo::transform &ludo::gameobject::local_transform()
 {
@@ -66,6 +77,11 @@ const std::vector<ludo::gameobject *> &ludo::gameobject::const_children_ptrs() c
 
 void ludo::gameobject::draw(const glm::mat4x4 &_global_transform) const
 {
+    if(!m_active)
+    {
+        return;
+    }
+
     if(m_sprite_ptr)
     {
         const glm::vec3 &position = m_local_transform.const_position();

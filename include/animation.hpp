@@ -5,7 +5,7 @@
 #include <vector>
 #include <set>
 #include <optional>
-#include <memory>
+#include <functional>
 #include <sprite.hpp>
 #include <time.hpp>
 #include <space.hpp>
@@ -19,12 +19,15 @@ namespace ludo
     {
     private:
         ludo::clk::duration m_delay;
+        std::function<void()> m_on_reach;
         ludo::sprite *m_sprite_ptr;
         std::optional<ludo::transform> m_transform_opt;
 
     public:
         keyframe();
         keyframe(const ludo::clk::duration &_delay);
+        std::function<void()> &on_reach();
+        const std::function<void()> &const_on_reach() const;
         ludo::clk::duration &delay();
         void set_sprite_ptr(ludo::sprite *_sprite_ptr);
         ludo::sprite *get_sprite_ptr() const;

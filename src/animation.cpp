@@ -7,11 +7,23 @@ std::set<ludo::animation *> ludo::animation::s_current_animation_ptrs;
 
 ludo::keyframe::keyframe() :
     m_delay(0),
+    m_on_reach([]() -> void {}),
     m_sprite_ptr(nullptr) {}
 
 ludo::keyframe::keyframe(const ludo::clk::duration &_delay) :
     m_delay(_delay),
+    m_on_reach([]() -> void {}),
     m_sprite_ptr(nullptr) {}
+
+std::function<void()> &ludo::keyframe::on_reach()
+{
+    return m_on_reach;
+}
+
+const std::function<void()> &ludo::keyframe::const_on_reach() const
+{
+    return m_on_reach;
+}
 
 ludo::clk::duration &ludo::keyframe::delay()
 {
@@ -94,6 +106,9 @@ void ludo::animation::play()
 
     m_current_keyframe_idx = 0;
     m_start_point = ludo::clk::now();
+
+    m_keyframes[m_current_keyframe_idx].const_on_reach()();
+
     m_playing = true;
     ludo::animation::s_current_animation_ptrs.insert(this);
 }
@@ -138,6 +153,11 @@ void ludo::animation::animate()
         {
             animation_ptr->m_current_keyframe_idx = next_idx;
             animation_ptr->m_start_point = now;
+
+            if(next_idx < keyframes.size())
+            {
+                keyframes[next_idx].const_on_reach()();
+            }
 
             continue;
         }
