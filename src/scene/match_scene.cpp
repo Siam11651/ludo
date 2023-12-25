@@ -5,7 +5,6 @@
 #include <input.hpp>
 
 ludo::match_scene::match_scene() :
-    m_spinner_animation(&m_spinner),
     scene()
 {
     m_dice_value = 1;
@@ -17,6 +16,11 @@ ludo::match_scene::match_scene() :
         ss << "assets/dices/dice" << i + 1 << ".png";
 
         m_dice_sprites[i].setup_sprite(ss.str());
+    }
+
+    for(size_t i = 0; i < 4; ++i)
+    {
+        m_spinner_animations[i] = new ludo::animation(&m_spinners[i]);
     }
 
     for(size_t i = 0; i < 15; ++i)
@@ -31,37 +35,107 @@ ludo::match_scene::match_scene() :
 
         new_keyframe.set_sprite_ptr(&m_spinner_sprites[i]);
 
-        if(i == 14)
+        if(i + 1 == m_spinner_sprites.size())
         {
-            new_keyframe.on_reach() = [this]() -> void
+            for(size_t k = 0; k < 4; ++k)
             {
-                this->m_dice.active() = true;
-                this->m_spinner.active() = false;
-                this->m_dice_value = this->rand_gen() % 6 + 1;
-                this->m_dice.set_sprite_ptr(&this->m_dice_sprites[this->m_dice_value - 1]);
-            };
-        }
+                new_keyframe.on_reach() = [this, k]() -> void
+                {
+                    if(this->m_moves[k].size() == 3)
+                    {
+                        this->m_moves[k].clear();
+                    }
 
-        m_spinner_animation.keyframes().push_back(new_keyframe);
+                    if(this->m_moves[k].size() == 0 || this->m_moves[k].back() < 6)
+                    {
+                        for(size_t j = 0; j < 3; ++j)
+                        {
+                            this->m_streak_dices[j].active() = false;
+                        }
+                    }
+
+                    this->m_dice.active() = true;
+                    this->m_spinners[k].active() = false;
+                    this->m_dice_value = this->rand_gen() % 6 + 1;
+
+                    this->m_dice.set_sprite_ptr(&this->m_dice_sprites[this->m_dice_value - 1]);
+
+                    this->m_streak_dices[this->m_moves[k].size()].active() = true;
+                    this->m_streak_dices[this->m_moves[k].size()]
+                        .set_sprite_ptr(&this->m_dice_sprites[this->m_dice_value - 1]);
+
+                    if(this->m_moves[k].size() > 0 && this->m_moves[k].back() == 6)
+                    {
+                        this->m_moves[k].push_back(this->m_dice_value);
+                    }
+                    else
+                    {
+                        this->m_moves[k] = {this->m_dice_value};
+                    }
+
+                    for(size_t j = 0; j < 3; ++j)
+                    {
+                        this->m_streak_dices[j].active() = false;
+                    }
+
+                    for(size_t j = 0; j < this->m_moves[k].size(); ++j)
+                    {
+                        this->m_streak_dices[j].active() = true;
+
+                        this->m_streak_dices[j].set_sprite_ptr(
+                            &this->m_dice_sprites[this->m_moves[k][j] - 1]);
+                    }
+
+                    if(this->m_moves[k].size() == 3 && this->m_moves[k].back() == 6)
+                    {
+                        this->m_moves[k].clear();
+                    }
+                };
+
+                m_spinner_animations[k]->keyframes().push_back(new_keyframe);
+            }
+        }
+        else
+        {
+            for(size_t k = 0; k < 4; ++k)
+            {
+                m_spinner_animations[k]->keyframes().push_back(new_keyframe);
+            }
+        }
     }
 
-    m_spinner.active() = false;
+    for(size_t i = 0; i < 3; ++i)
+    {
+        m_streak_dices[i].local_transform().position() =
+            glm::vec3(-0.9f + i * 0.15f, -1.3f, 0.01f);
+        m_streak_dices[i].local_transform().scale() /= 15.0f;
+
+        m_streak_dices[i].set_sprite_ptr(&m_dice_sprites[0]);
+        m_streak_dices[i].active() = false;
+    }
+
+    m_curren_cell_ptr = &m_board_handler.const_blocks().front().const_cells()[7];
+
+    for(size_t i = 0; i < 4; ++i)
+    {
+        m_spinners[i].active() = false;
+        m_spinners[i].local_transform().scale() /= 10.0f;
+    }
+
+    m_spinners[0].local_transform().position() = glm::vec3(-0.89f, -1.11f, 0.01f);
+    m_spinners[1].local_transform().position() = glm::vec3(0.89f, -1.11f, 0.01f);
+    m_spinners[2].local_transform().position() = glm::vec3(0.89f, 1.11f, 0.01f);
+    m_spinners[3].local_transform().position() = glm::vec3(-0.89f, 1.11f, 0.01f);
+
     m_board_sprite.setup_sprite("assets/board.png");
     m_coin_red_sprite.setup_sprite("assets/coins/coin_red.png");
     m_dice.set_sprite_ptr(&m_dice_sprites.front());
-    m_dice.local_transform().position().x = -0.89f;
-    m_dice.local_transform().position().y = -1.11f;
-    m_dice.local_transform().position().z = 0.01f;
+    m_dice.local_transform().position() = glm::vec3(-0.89f, -1.11f, 0.01f);
     m_dice.local_transform().scale() /= 10.0f;
-    m_spinner.local_transform().position().x = -0.89f;
-    m_spinner.local_transform().position().y = -1.11f;
-    m_spinner.local_transform().position().z = 0.01f;
-    m_spinner.local_transform().scale() /= 10.0f;
     m_board.set_sprite_ptr(&m_board_sprite);
     m_coin_red.set_sprite_ptr(&m_coin_red_sprite);
+    m_coin_red.local_transform().position() = m_curren_cell_ptr->const_position();
     m_coin_red.local_transform().position().z = 0.01f;
-    m_coin_red.local_transform().position().x = -2.0f / 15.0f;
-    m_coin_red.local_transform().position().y = -12.0f / 15.0f;
     m_coin_red.local_transform().scale() /= 20.0f;
     m_camera.transform().position().z = 3.5f;
 
@@ -70,8 +144,17 @@ ludo::match_scene::match_scene() :
         &m_board,
         &m_coin_red,
         &m_dice,
-        &m_spinner
     });
+
+    for(size_t i = 0; i < 4; ++i)
+    {
+        m_gameobject_ptrs.push_back(&m_spinners[i]);
+    }
+
+    for(size_t i = 0; i < 3; ++i)
+    {
+        m_gameobject_ptrs.push_back(&m_streak_dices[i]);
+    }
 }
 
 void ludo::match_scene::on_update()
@@ -87,8 +170,8 @@ void ludo::match_scene::on_update()
             && 825.0f <= mouse_pos.y && mouse_pos.y <= 877.0f)
         {
             m_dice.active() = false;
-            m_spinner.active() = true;
-            m_spinner_animation.play();
+            m_spinners[0].active() = true;
+            m_spinner_animations[0]->play();
         }
     }
 

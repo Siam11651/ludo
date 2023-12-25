@@ -42,11 +42,24 @@ namespace ludo
     public:
         block();
         block(const float &_scale, const ludo::block::color &_color);
+        void rotate(const float &_angle);
+        std::array<ludo::cell, 22> &cells();
+        const std::array<ludo::cell, 22> &const_cells() const;
     };
 
     class board
     {
-    
+    private:
+        float m_scale;
+        std::array<ludo::block, 4> m_blocks;
+
+        void constructor_helper();
+
+    public:
+        board();
+        board(const float &_scale);
+        std::array<ludo::block, 4> &blocks();
+        const std::array<ludo::block, 4> &const_blocks() const;
     };
 }
 

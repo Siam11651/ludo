@@ -6,6 +6,7 @@
 #include <input.hpp>
 #include <scene/scene.hpp>
 #include <animation.hpp>
+#include <board.hpp>
 
 namespace ludo
 {
@@ -14,15 +15,19 @@ namespace ludo
     private:
         std::random_device rand_gen;
         uint8_t m_dice_value;
+        std::array<std::vector<uint8_t>, 4> m_moves;
+        ludo::board m_board_handler;
+        const ludo::cell *m_curren_cell_ptr;
         ludo::input::status m_previous_status;
         std::array<ludo::sprite, 6> m_dice_sprites;
         std::array<ludo::sprite, 15> m_spinner_sprites;
         ludo::sprite m_board_sprite;
         ludo::sprite m_coin_red_sprite;
-        ludo::animation m_spinner_animation;
+        std::array<ludo::animation *, 4> m_spinner_animations;
         ludo::gameobject m_dice;
+        std::array<ludo::gameobject, 3> m_streak_dices;
         ludo::gameobject m_board;
-        ludo::gameobject m_spinner;
+        std::array<ludo::gameobject, 4> m_spinners;
         ludo::gameobject m_coin_red;
 
     public:
