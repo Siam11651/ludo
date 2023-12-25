@@ -10,7 +10,8 @@ namespace ludo
     class test_scene : public scene
     {
     private:
-        
+        std::array<ludo::sprite, 514> m_sprites;
+        ludo::gameobject m_meimei;
 
     public:
         test_scene();

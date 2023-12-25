@@ -10,6 +10,7 @@ find_package(glm REQUIRED)
 add_executable(ludo
     "src/glad/glad.c"
     "src/animation.cpp"
+    "src/board.cpp"
     "src/main.cpp"
     "src/scene/match_scene.cpp"
     "src/scene/scene.cpp"
