@@ -118,14 +118,14 @@ ludo::match_scene::match_scene() :
 
     for(size_t i = 0; i < 4; ++i)
     {
+        const glm::mat4x4 rotation_mat = glm::rotate(glm::identity<glm::mat4x4>(),
+            (float)(M_PI * i) / 2.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+        const glm::vec3 new_position = glm::vec3(rotation_mat
+            * glm::vec4(-0.89f, -1.11f, 0.01f, 1.0f));
         m_spinners[i].active() = false;
+        m_spinners[i].local_transform().position() = new_position;
         m_spinners[i].local_transform().scale() /= 10.0f;
     }
-
-    m_spinners[0].local_transform().position() = glm::vec3(-0.89f, -1.11f, 0.01f);
-    m_spinners[1].local_transform().position() = glm::vec3(0.89f, -1.11f, 0.01f);
-    m_spinners[2].local_transform().position() = glm::vec3(0.89f, 1.11f, 0.01f);
-    m_spinners[3].local_transform().position() = glm::vec3(-0.89f, 1.11f, 0.01f);
 
     m_board_sprite.setup_sprite("assets/board.png");
     m_coin_red_sprite.setup_sprite("assets/coins/coin_red.png");
