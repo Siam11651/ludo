@@ -73,6 +73,7 @@ int main()
         ludo::animation::animate();
         current_scene->draw();
         current_scene->on_late_update();
+        current_scene->listen_events();
         glfwSwapBuffers(window);
         ludo::time::end_frame();
     }

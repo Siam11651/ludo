@@ -3,6 +3,7 @@
 #include <scenes/match_scene.hpp>
 #include <animation.hpp>
 #include <input.hpp>
+#include <iostream>
 
 ludo::match_scene::match_scene() :
     scene()
@@ -177,7 +178,7 @@ ludo::match_scene::match_scene() :
     m_coin_red.local_transform.position = m_curren_cell_ptr->const_position();
     m_coin_red.local_transform.position.z = 0.01f;
     m_coin_red.local_transform.scale /= 10.0f;
-    camera.transform.position.z = 3.5f;
+    main_camera.transform.position.z = 3.5f;
 
     m_gameobject_ptrs.insert(m_gameobject_ptrs.end(),
     {
@@ -195,6 +196,16 @@ ludo::match_scene::match_scene() :
             m_gameobject_ptrs.push_back(&m_streak_dices[i][j]);
         }
     }
+
+    m_dice_button.set_sprite_ptr(&m_act_dice_sprites.front());
+    m_dice_button.local_transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(45.0f)));
+
+    m_dice_button.callbacks.push_back([]() -> void
+    {
+        std::cout << "yay" << std::endl;
+    });
+
+    m_ui_element_ptrs.push_back(&m_dice_button);
 }
 
 void ludo::match_scene::on_update()

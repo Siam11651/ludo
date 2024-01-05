@@ -2,7 +2,9 @@
 #define SCENE_H
 
 #include <sprite.hpp>
+#include <input.hpp>
 #include <vector>
+#include <functional>
 #include <glm/ext.hpp>
 
 namespace ludo
@@ -22,7 +24,7 @@ namespace ludo
     {
     public:
         ludo::transform transform;
-        glm::mat4x4 projection;
+        glm::mat4 projection;
 
         camera();
         camera(const ludo::transform &_transform);
@@ -41,21 +43,46 @@ namespace ludo
         gameobject();
         ludo::sprite *get_sprite_ptr() const;
         void set_sprite_ptr(ludo::sprite *_sprite_ptr);
-        void draw(const glm::mat4x4 &_global_transform) const;
+        void draw(const glm::mat4 &_global_transform) const;
+        virtual ~gameobject();
+    };
+
+    class event_listener : public gameobject
+    {
+    private:
+        static ludo::input::status s_left_mouse_previous_status;
+
+    public:
+        std::vector<std::function<void()>> callbacks;
+
+        event_listener();
+        void listen(const glm::mat4 &_global_transform);
+        void execute_callbacks();
+    };
+
+    class button : public event_listener
+    {
+    public:
+        button();
     };
 
     class scene
     {
+    private:
+        glm::mat4 m_ui_projection;
+
     protected:
         std::vector<ludo::gameobject *> m_gameobject_ptrs;
+        std::vector<ludo::gameobject *> m_ui_element_ptrs;
 
     public:
-        ludo::camera camera;
+        ludo::camera main_camera;
 
         scene();
         void draw() const;
         virtual void on_update() = 0;
         virtual void on_late_update() = 0;
+        void listen_events();
         void simulate_physics() const;
     };
 }

@@ -37,6 +37,8 @@ namespace ludo
         std::array<ludo::gameobject, 4> m_spinners;
         ludo::gameobject m_coin_red;
 
+        ludo::button m_dice_button;
+
     public:
         match_scene();
         void on_update();
