@@ -110,14 +110,14 @@ ludo::match_scene::match_scene() :
                     }
                 };
 
-                m_spinner_animations[k]->keyframes().push_back(new_keyframe);
+                m_spinner_animations[k]->keyframes.push_back(new_keyframe);
             }
         }
         else
         {
             for(size_t k = 0; k < 4; ++k)
             {
-                m_spinner_animations[k]->keyframes().push_back(new_keyframe);
+                m_spinner_animations[k]->keyframes.push_back(new_keyframe);
             }
         }
     }

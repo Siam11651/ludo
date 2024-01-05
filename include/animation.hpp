@@ -35,20 +35,17 @@ namespace ludo
     {
     private:
         bool m_playing;
-        bool m_loop;
         size_t m_current_keyframe_idx;
         ludo::clk::time_point m_start_point;
         ludo::gameobject *m_gameobject_ptr;
-        std::vector<ludo::keyframe> m_keyframes;
         static std::set<animation *> s_current_animation_ptrs;
 
     public:
+        bool loop;
+        std::vector<ludo::keyframe> keyframes;
+
         animation(ludo::gameobject *_gameobject_ptr);
-        bool &loop();
-        const bool &const_loop() const;
-        std::vector<ludo::keyframe> &keyframes();
-        const std::vector<ludo::keyframe> &const_keyframes() const;
-        const bool &get_playing() const;
+        const bool &is_playing() const;
         ludo::gameobject *get_gameobject_ptr() const;
         void play();
         void stop();

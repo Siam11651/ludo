@@ -16,7 +16,7 @@ ludo::test_scene::test_scene()
         ludo::keyframe new_keyframe(ludo::clk::duration(1000000000 / 24));
         
         new_keyframe.set_sprite_ptr(&m_sprites[i]);
-        meimei_animation->keyframes().push_back(new_keyframe);
+        meimei_animation->keyframes.push_back(new_keyframe);
     }
 
     camera.transform.position.z = 3.5f;

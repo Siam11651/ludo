@@ -28,48 +28,28 @@ ludo::sprite *ludo::keyframe::get_sprite_ptr() const
 ludo::animation::animation(ludo::gameobject *_gameobject_ptr) :
     m_gameobject_ptr(_gameobject_ptr),
     m_playing(false),
-    m_loop(false) {}
-
-bool &ludo::animation::loop()
-{
-    return m_loop;
-}
-
-const bool &ludo::animation::const_loop() const
-{
-    return m_loop;
-}
-
-std::vector<ludo::keyframe> &ludo::animation::keyframes()
-{
-    return m_keyframes;
-}
-
-const std::vector<ludo::keyframe> &ludo::animation::const_keyframes() const
-{
-    return m_keyframes;
-}
+    loop(false) {}
 
 void ludo::animation::play()
 {
-    if(m_keyframes.size() == 0)
+    if(keyframes.size() == 0)
     {
         return;
     }
 
-    if(m_keyframes.front().transform_opt.has_value())
+    if(keyframes.front().transform_opt.has_value())
     {
-        m_gameobject_ptr->local_transform = m_keyframes.front().transform_opt.value();
+        m_gameobject_ptr->local_transform = keyframes.front().transform_opt.value();
     }
 
-    ludo::sprite *new_sprite = m_keyframes.front().get_sprite_ptr();
+    ludo::sprite *new_sprite = keyframes.front().get_sprite_ptr();
 
     if(new_sprite)
     {
         m_gameobject_ptr->set_sprite_ptr(new_sprite);
     }
 
-    if(m_keyframes.size() == 1)
+    if(keyframes.size() == 1)
     {
         return;
     }
@@ -77,7 +57,7 @@ void ludo::animation::play()
     m_current_keyframe_idx = 0;
     m_start_point = ludo::clk::now();
 
-    m_keyframes[m_current_keyframe_idx].on_reach();
+    keyframes[m_current_keyframe_idx].on_reach();
 
     m_playing = true;
     ludo::animation::s_current_animation_ptrs.insert(this);
@@ -89,7 +69,7 @@ void ludo::animation::stop()
     s_current_animation_ptrs.erase(this);
 }
 
-const bool &ludo::animation::get_playing() const
+const bool &ludo::animation::is_playing() const
 {
     return m_playing;
 }
@@ -105,9 +85,9 @@ void ludo::animation::animate()
 
     for(ludo::animation *animation_ptr : s_current_animation_ptrs)
     {
-        const std::vector<keyframe> &keyframes = animation_ptr->m_keyframes;
+        const std::vector<keyframe> &keyframes = animation_ptr->keyframes;
 
-        if(animation_ptr->m_current_keyframe_idx >= animation_ptr->m_keyframes.size())
+        if(animation_ptr->m_current_keyframe_idx >= animation_ptr->keyframes.size())
         {
             stop_queue.push(animation_ptr);
 
@@ -143,9 +123,9 @@ void ludo::animation::animate()
         {
             if(keyframes[next_idx].transform_opt.has_value())
             {
-                const ludo::transform &start = animation_ptr->m_keyframes[current_idx]
+                const ludo::transform &start = animation_ptr->keyframes[current_idx]
                     .transform_opt.value();
-                const ludo::transform &end = animation_ptr->m_keyframes[next_idx]
+                const ludo::transform &end = animation_ptr->keyframes[next_idx]
                     .transform_opt.value();
                 const glm::vec3 m = (end.position - start.position) / (float)delay.count();
                 const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;
@@ -166,13 +146,13 @@ void ludo::animation::animate()
 
         stop_queue.pop();
 
-        if(front->m_keyframes.back().transform_opt.has_value())
+        if(front->keyframes.back().transform_opt.has_value())
         {
             front->m_gameobject_ptr->local_transform = 
-                front->m_keyframes.back().transform_opt.value();
+                front->keyframes.back().transform_opt.value();
         }
 
-        if(front->m_loop)
+        if(front->loop)
         {
             front->play();
         }
