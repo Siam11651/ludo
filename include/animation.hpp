@@ -18,22 +18,17 @@ namespace ludo
     class keyframe
     {
     private:
-        ludo::clk::duration m_delay;
-        std::function<void()> m_on_reach;
         ludo::sprite *m_sprite_ptr;
-        std::optional<ludo::transform> m_transform_opt;
 
     public:
+        ludo::clk::duration delay;
+        std::function<void()> on_reach;
+        std::optional<ludo::transform> transform_opt;
+
         keyframe();
         keyframe(const ludo::clk::duration &_delay);
-        std::function<void()> &on_reach();
-        const std::function<void()> &const_on_reach() const;
-        ludo::clk::duration &delay();
         void set_sprite_ptr(ludo::sprite *_sprite_ptr);
         ludo::sprite *get_sprite_ptr() const;
-        const ludo::clk::duration &const_delay() const;
-        std::optional<ludo::transform> &transform_opt();
-        const std::optional<ludo::transform> &const_transform_opt() const;
     };
 
     class animation

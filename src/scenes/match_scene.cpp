@@ -47,7 +47,7 @@ ludo::match_scene::match_scene() :
         {
             for(size_t k = 0; k < 4; ++k)
             {
-                new_keyframe.on_reach() = [this, k]() -> void
+                new_keyframe.on_reach = [this, k]() -> void
                 {
                     this->m_dices[k].active = true;
                     this->m_spinners[k].active = false;

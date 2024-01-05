@@ -6,34 +6,14 @@
 std::set<ludo::animation *> ludo::animation::s_current_animation_ptrs;
 
 ludo::keyframe::keyframe() :
-    m_delay(0),
-    m_on_reach([]() -> void {}),
+    delay(0),
+    on_reach([]() -> void {}),
     m_sprite_ptr(nullptr) {}
 
 ludo::keyframe::keyframe(const ludo::clk::duration &_delay) :
-    m_delay(_delay),
-    m_on_reach([]() -> void {}),
+    delay(_delay),
+    on_reach([]() -> void {}),
     m_sprite_ptr(nullptr) {}
-
-std::function<void()> &ludo::keyframe::on_reach()
-{
-    return m_on_reach;
-}
-
-const std::function<void()> &ludo::keyframe::const_on_reach() const
-{
-    return m_on_reach;
-}
-
-ludo::clk::duration &ludo::keyframe::delay()
-{
-    return m_delay;
-}
-
-const ludo::clk::duration &ludo::keyframe::const_delay() const
-{
-    return m_delay;
-}
 
 void ludo::keyframe::set_sprite_ptr(ludo::sprite *_sprite_ptr)
 {
@@ -43,16 +23,6 @@ void ludo::keyframe::set_sprite_ptr(ludo::sprite *_sprite_ptr)
 ludo::sprite *ludo::keyframe::get_sprite_ptr() const
 {
     return m_sprite_ptr;
-}
-
-std::optional<ludo::transform> &ludo::keyframe::transform_opt()
-{
-    return m_transform_opt;
-}
-
-const std::optional<ludo::transform> &ludo::keyframe::const_transform_opt() const
-{
-    return m_transform_opt;
 }
 
 ludo::animation::animation(ludo::gameobject *_gameobject_ptr) :
@@ -87,9 +57,9 @@ void ludo::animation::play()
         return;
     }
 
-    if(m_keyframes.front().transform_opt().has_value())
+    if(m_keyframes.front().transform_opt.has_value())
     {
-        m_gameobject_ptr->local_transform = m_keyframes.front().transform_opt().value();
+        m_gameobject_ptr->local_transform = m_keyframes.front().transform_opt.value();
     }
 
     ludo::sprite *new_sprite = m_keyframes.front().get_sprite_ptr();
@@ -107,7 +77,7 @@ void ludo::animation::play()
     m_current_keyframe_idx = 0;
     m_start_point = ludo::clk::now();
 
-    m_keyframes[m_current_keyframe_idx].const_on_reach()();
+    m_keyframes[m_current_keyframe_idx].on_reach();
 
     m_playing = true;
     ludo::animation::s_current_animation_ptrs.insert(this);
@@ -147,7 +117,7 @@ void ludo::animation::animate()
         const ludo::clk::time_point now = ludo::clk::now();
         const size_t current_idx = animation_ptr->m_current_keyframe_idx;
         const size_t next_idx = animation_ptr->m_current_keyframe_idx + 1;
-        const ludo::clk::duration delay = keyframes[current_idx].const_delay();
+        const ludo::clk::duration delay = keyframes[current_idx].delay;
 
         if(now >= animation_ptr->m_start_point + delay)
         {
@@ -156,7 +126,7 @@ void ludo::animation::animate()
 
             if(next_idx < keyframes.size())
             {
-                keyframes[next_idx].const_on_reach()();
+                keyframes[next_idx].on_reach();
             }
 
             continue;
@@ -169,14 +139,14 @@ void ludo::animation::animate()
             animation_ptr->m_gameobject_ptr->set_sprite_ptr(new_sprite);
         }
 
-        if(keyframes[current_idx].const_transform_opt().has_value())
+        if(keyframes[current_idx].transform_opt.has_value())
         {
-            if(keyframes[next_idx].const_transform_opt().has_value())
+            if(keyframes[next_idx].transform_opt.has_value())
             {
                 const ludo::transform &start = animation_ptr->m_keyframes[current_idx]
-                    .const_transform_opt().value();
+                    .transform_opt.value();
                 const ludo::transform &end = animation_ptr->m_keyframes[next_idx]
-                    .const_transform_opt().value();
+                    .transform_opt.value();
                 const glm::vec3 m = (end.position - start.position) / (float)delay.count();
                 const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;
                 animation_ptr->m_gameobject_ptr->local_transform.position = start.position
@@ -185,7 +155,7 @@ void ludo::animation::animate()
             else
             {
                 animation_ptr->m_gameobject_ptr->local_transform =
-                    keyframes[current_idx].const_transform_opt().value();
+                    keyframes[current_idx].transform_opt.value();
             }
         }
     }
@@ -196,10 +166,10 @@ void ludo::animation::animate()
 
         stop_queue.pop();
 
-        if(front->m_keyframes.back().const_transform_opt().has_value())
+        if(front->m_keyframes.back().transform_opt.has_value())
         {
             front->m_gameobject_ptr->local_transform = 
-                front->m_keyframes.back().const_transform_opt().value();
+                front->m_keyframes.back().transform_opt.value();
         }
 
         if(front->m_loop)
