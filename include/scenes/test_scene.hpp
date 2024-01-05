@@ -1,7 +1,7 @@
 #ifndef TEST_SCENE_H
 #define TEST_SCENE_H
 
-#include <scene/scene.hpp>
+#include <scene.hpp>
 #include <animation.hpp>
 #include <array>
 

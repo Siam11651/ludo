@@ -8,7 +8,7 @@
 #include <functional>
 #include <sprite.hpp>
 #include <time.hpp>
-#include <space.hpp>
+#include <scene.hpp>
 
 namespace ludo
 {

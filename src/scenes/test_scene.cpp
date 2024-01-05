@@ -1,4 +1,4 @@
-#include <scene/test_scene.hpp>
+#include <scenes/test_scene.hpp>
 #include <sstream>
 
 ludo::test_scene::test_scene()
@@ -19,8 +19,8 @@ ludo::test_scene::test_scene()
         meimei_animation->keyframes().push_back(new_keyframe);
     }
 
-    m_camera.transform().position().z = 3.5f;
-    m_meimei.local_transform().scale().y = 9.0f / 16.0f;
+    m_camera.transform().position.z = 3.5f;
+    m_meimei.local_transform().scale.y = 9.0f / 16.0f;
 
     m_gameobject_ptrs.push_back(&m_meimei);
 

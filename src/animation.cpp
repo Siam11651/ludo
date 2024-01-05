@@ -1,5 +1,5 @@
 #include <animation.hpp>
-#include <scene/scene.hpp>
+#include <scene.hpp>
 #include <queue>
 #include <iostream>
 
@@ -177,9 +177,9 @@ void ludo::animation::animate()
                     .const_transform_opt().value();
                 const ludo::transform &end = animation_ptr->m_keyframes[next_idx]
                     .const_transform_opt().value();
-                const glm::vec3 m = (end.const_position() - start.const_position()) / (float)delay.count();
+                const glm::vec3 m = (end.position - start.position) / (float)delay.count();
                 const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;
-                animation_ptr->m_gameobject_ptr->local_transform().position() = start.const_position()
+                animation_ptr->m_gameobject_ptr->local_transform().position = start.position
                     + m * ((float)elapsed.count());
             }
             else

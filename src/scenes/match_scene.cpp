@@ -1,6 +1,6 @@
 #include <sstream>
 #include <iostream>
-#include <scene/match_scene.hpp>
+#include <scenes/match_scene.hpp>
 #include <animation.hpp>
 #include <input.hpp>
 
@@ -131,12 +131,12 @@ ludo::match_scene::match_scene() :
         glm::vec3 new_position = glm::vec3(rotation_mat
             * glm::vec4(-0.89f, -1.11f, 0.01f, 1.0f));
         m_spinners[i].active() = false;
-        m_spinners[i].local_transform().position() = new_position;
-        m_spinners[i].local_transform().scale() /= 5.0f;
+        m_spinners[i].local_transform().position = new_position;
+        m_spinners[i].local_transform().scale /= 5.0f;
         new_position = glm::vec3(rotation_mat
             * glm::vec4(-0.89f, -1.11f, 0.01f, 1.0f));
-        m_dices[i].local_transform().position() = new_position;
-        m_dices[i].local_transform().scale() /= 5.0f;
+        m_dices[i].local_transform().position = new_position;
+        m_dices[i].local_transform().scale /= 5.0f;
 
         if(i % m_player_count != 0)
         {
@@ -156,8 +156,8 @@ ludo::match_scene::match_scene() :
         {
             new_position = glm::vec3(rotation_mat
                 * glm::vec4(-0.9f + j * 0.15f, -1.3f, 0.01f, 1.0f));
-            m_streak_dices[i][j].local_transform().position() = new_position;
-            m_streak_dices[i][j].local_transform().scale() /= 7.5f;
+            m_streak_dices[i][j].local_transform().position = new_position;
+            m_streak_dices[i][j].local_transform().scale /= 7.5f;
 
             m_streak_dices[i][j].set_sprite_ptr(&m_dice_sprites.front());
             m_streak_dices[i][j].active() = false;
@@ -173,11 +173,11 @@ ludo::match_scene::match_scene() :
     m_coin_red_sprite.setup_sprite("assets/coins/coin_red.png");
     m_board.set_sprite_ptr(&m_board_sprite);
     m_coin_red.set_sprite_ptr(&m_coin_red_sprite);
-    m_board.local_transform().scale() = glm::vec3(2.0f, 2.0f, 1.0f);
-    m_coin_red.local_transform().position() = m_curren_cell_ptr->const_position();
-    m_coin_red.local_transform().position().z = 0.01f;
-    m_coin_red.local_transform().scale() /= 10.0f;
-    m_camera.transform().position().z = 3.5f;
+    m_board.local_transform().scale = glm::vec3(2.0f, 2.0f, 1.0f);
+    m_coin_red.local_transform().position = m_curren_cell_ptr->const_position();
+    m_coin_red.local_transform().position.z = 0.01f;
+    m_coin_red.local_transform().scale /= 10.0f;
+    m_camera.transform().position.z = 3.5f;
 
     m_gameobject_ptrs.insert(m_gameobject_ptrs.end(),
     {

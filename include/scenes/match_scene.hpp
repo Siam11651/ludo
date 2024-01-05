@@ -4,7 +4,7 @@
 #include <random>
 #include <array>
 #include <input.hpp>
-#include <scene/scene.hpp>
+#include <scene.hpp>
 #include <animation.hpp>
 #include <board.hpp>
 

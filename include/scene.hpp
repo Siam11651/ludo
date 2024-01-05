@@ -1,9 +1,23 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <space.hpp>
 #include <sprite.hpp>
 #include <vector>
+#include <glm/ext.hpp>
+
+namespace ludo
+{
+    class transform
+    {
+    public:
+        glm::vec3 position;
+        glm::quat rotation;
+        glm::vec3 scale;
+
+        transform();
+        transform(const glm::vec3 &_position, const glm::quat &_rotation, const glm::vec3 &_scale);
+    };
+}
 
 namespace ludo
 {

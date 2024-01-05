@@ -6,8 +6,8 @@
 #include <input.hpp>
 #include <sprite.hpp>
 #include <animation.hpp>
-#include <scene/test_scene.hpp>
-#include <scene/match_scene.hpp>
+#include <scenes/test_scene.hpp>
+#include <scenes/match_scene.hpp>
 
 int main()
 {
