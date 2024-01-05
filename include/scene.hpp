@@ -23,17 +23,12 @@ namespace ludo
 {
     class camera
     {
-    private:
-        ludo::transform m_transform;
-        glm::mat4x4 m_projection;
-
     public:
+        ludo::transform transform;
+        glm::mat4x4 projection;
+
         camera();
         camera(const ludo::transform &_transform);
-        ludo::transform &transform();
-        const ludo::transform &const_transform() const;
-        glm::mat4x4 &projection();
-        const glm::mat4x4 &const_projection() const;
     };
 
     class gameobject

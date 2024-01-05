@@ -15,32 +15,12 @@ ludo::transform::transform(const glm::vec3 &_position, const glm::quat &_rotatio
     scale(_scale) {}
 
 ludo::camera::camera() :
-    m_transform(glm::vec3(0.0f, 0.0f, 1.0f), glm::quat(), glm::vec3(1.0f)),
-    m_projection(glm::perspective(glm::radians(45.0f), screen::aspect_ratio(), 0.01f, 100.0f)) {}
+    transform(glm::vec3(0.0f, 0.0f, 1.0f), glm::quat(), glm::vec3(1.0f)),
+    projection(glm::perspective(glm::radians(45.0f), screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
 ludo::camera::camera(const ludo::transform &_transform) :
-    m_transform(_transform),
-    m_projection(glm::perspective(90.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
-
-ludo::transform &ludo::camera::transform()
-{
-    return m_transform;
-}
-
-const ludo::transform &ludo::camera::const_transform() const
-{
-    return m_transform;
-}
-
-glm::mat4x4 &ludo::camera::projection()
-{
-    return m_projection;
-}
-
-const glm::mat4x4 &ludo::camera::const_projection() const
-{
-    return m_projection;
-}
+    transform(_transform),
+    projection(glm::perspective(90.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
 ludo::gameobject::gameobject() :
     m_active(true) {}
@@ -120,13 +100,13 @@ const ludo::camera &ludo::scene::const_camera() const
 
 void ludo::scene::draw() const
 {
-    const glm::vec3 &position = m_camera.const_transform().position;
-    const glm::quat &rotation = m_camera.const_transform().rotation;
+    const glm::vec3 &position = m_camera.transform.position;
+    const glm::quat &rotation = m_camera.transform.rotation;
     const glm::mat4x4 &rotation_mat = glm::toMat4(rotation);
     const glm::vec3 forward = rotation_mat * glm::vec4({0.0f, 0.0f, -1.0f, 1.0f});
     const glm::vec3 up = rotation_mat * glm::vec4({0.0f, 1.0f, 0.0f, 1.0f});
     const glm::mat4x4 view = glm::lookAt(position, position + forward, up);
-    const glm::mat4x4 pxv = m_camera.const_projection() * view;
+    const glm::mat4x4 pxv = m_camera.projection * view;
     
     for(ludo::gameobject *gameobject_ptr : m_gameobject_ptrs)
     {
