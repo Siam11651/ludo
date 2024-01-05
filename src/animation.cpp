@@ -89,7 +89,7 @@ void ludo::animation::play()
 
     if(m_keyframes.front().transform_opt().has_value())
     {
-        m_gameobject_ptr->local_transform() = m_keyframes.front().transform_opt().value();
+        m_gameobject_ptr->local_transform = m_keyframes.front().transform_opt().value();
     }
 
     ludo::sprite *new_sprite = m_keyframes.front().get_sprite_ptr();
@@ -179,12 +179,12 @@ void ludo::animation::animate()
                     .const_transform_opt().value();
                 const glm::vec3 m = (end.position - start.position) / (float)delay.count();
                 const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;
-                animation_ptr->m_gameobject_ptr->local_transform().position = start.position
+                animation_ptr->m_gameobject_ptr->local_transform.position = start.position
                     + m * ((float)elapsed.count());
             }
             else
             {
-                animation_ptr->m_gameobject_ptr->local_transform() =
+                animation_ptr->m_gameobject_ptr->local_transform =
                     keyframes[current_idx].const_transform_opt().value();
             }
         }
@@ -198,7 +198,7 @@ void ludo::animation::animate()
 
         if(front->m_keyframes.back().const_transform_opt().has_value())
         {
-            front->m_gameobject_ptr->local_transform() = 
+            front->m_gameobject_ptr->local_transform = 
                 front->m_keyframes.back().const_transform_opt().value();
         }
 

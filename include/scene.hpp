@@ -17,10 +17,7 @@ namespace ludo
         transform();
         transform(const glm::vec3 &_position, const glm::quat &_rotation, const glm::vec3 &_scale);
     };
-}
 
-namespace ludo
-{
     class camera
     {
     public:
@@ -34,21 +31,16 @@ namespace ludo
     class gameobject
     {
     private:
-        bool m_active;
-        ludo::transform m_local_transform;
         ludo::sprite *m_sprite_ptr;
-        std::vector<ludo::gameobject *> m_children_ptrs;
 
     public:
+        bool active;
+        ludo::transform local_transform;
+        std::vector<ludo::gameobject *> children_ptrs;
+
         gameobject();
-        bool &active();
-        const bool &const_active() const;
-        ludo::transform &local_transform();
-        const ludo::transform &const_local_transform() const;
         ludo::sprite *get_sprite_ptr() const;
         void set_sprite_ptr(ludo::sprite *_sprite_ptr);
-        std::vector<ludo::gameobject *> &children_ptrs();
-        const std::vector<ludo::gameobject *> &const_children_ptrs() const;
         void draw(const glm::mat4x4 &_global_transform) const;
     };
 

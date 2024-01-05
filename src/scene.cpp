@@ -23,27 +23,7 @@ ludo::camera::camera(const ludo::transform &_transform) :
     projection(glm::perspective(90.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
 ludo::gameobject::gameobject() :
-    m_active(true) {}
-
-bool &ludo::gameobject::active()
-{
-    return m_active;
-}
-
-const bool &ludo::gameobject::const_active() const
-{
-    return m_active;
-}
-
-ludo::transform &ludo::gameobject::local_transform()
-{
-    return m_local_transform;
-}
-
-const ludo::transform &ludo::gameobject::const_local_transform() const
-{
-    return m_local_transform;
-}
+    active(true) {}
 
 ludo::sprite *ludo::gameobject::get_sprite_ptr() const
 {
@@ -55,28 +35,18 @@ void ludo::gameobject::set_sprite_ptr(ludo::sprite *_sprite_ptr)
     m_sprite_ptr = _sprite_ptr;
 }
 
-std::vector<ludo::gameobject *> &ludo::gameobject::children_ptrs()
-{
-    return m_children_ptrs;
-}
-
-const std::vector<ludo::gameobject *> &ludo::gameobject::const_children_ptrs() const
-{
-    return m_children_ptrs;
-}
-
 void ludo::gameobject::draw(const glm::mat4x4 &_global_transform) const
 {
-    if(!m_active)
+    if(!active)
     {
         return;
     }
 
     if(m_sprite_ptr)
     {
-        const glm::vec3 &position = m_local_transform.position;
-        const glm::quat &rotation = m_local_transform.rotation;
-        const glm::vec3 &scale = m_local_transform.scale;
+        const glm::vec3 &position = local_transform.position;
+        const glm::quat &rotation = local_transform.rotation;
+        const glm::vec3 &scale = local_transform.scale;
         glm::mat4x4 local_transform = glm::translate(glm::identity<glm::mat4x4>(), position);
         local_transform *= glm::toMat4(rotation);
         local_transform = glm::scale(local_transform, scale);
