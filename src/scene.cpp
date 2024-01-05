@@ -154,7 +154,7 @@ void ludo::scene::listen_events()
         {
             ludo::event_listener *event_listener_ptr = dynamic_cast<ludo::event_listener *>(ui_element_ptr);
 
-            if(event_listener_ptr)
+            if(event_listener_ptr && event_listener_ptr->active)
             {
                 event_listener_ptr->listen(mouse_pos_vec4);
             }

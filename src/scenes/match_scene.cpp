@@ -1,13 +1,15 @@
 #include <sstream>
-#include <iostream>
+#include <screen.hpp>
 #include <scenes/match_scene.hpp>
 #include <animation.hpp>
+#include <glm/gtx/quaternion.hpp>
 #include <input.hpp>
 #include <iostream>
 
 ludo::match_scene::match_scene() :
     scene()
 {
+    m_move = false;
     m_player_count = 2;
     m_turn = 0;
 
@@ -52,7 +54,7 @@ ludo::match_scene::match_scene() :
                 {
                     m_dices[k].active = true;
                     m_spinners[k].active = false;
-                    m_dice_values[k] = rand_gen() % 6 + 1;
+                    m_dice_values[k] = std::random_device()() % 6 + 1;
                     m_streak_dices[k][m_moves[k].size()].active = true;
 
                     if(m_moves[k].size() > 0 && m_moves[k].back() == 6)
@@ -83,29 +85,21 @@ ludo::match_scene::match_scene() :
                     {
                         if(m_moves[k].back() < 6)
                         {
-                            // let make move
-                        }
-                        else
-                        {
-                            m_turn += m_player_count;
-                            m_turn %= 4;
+                            m_move = true;
                         }
 
                         m_moves[k].clear();
                     }
                     else if(m_moves[k].back() < 6)
                     {
-                        // make move
-
-                        m_turn += m_player_count;
-                        m_turn %= 4;
+                        m_move = true;
                     }
 
-                    m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+                    m_dices[k].set_sprite_ptr(&m_dice_sprites[m_dice_values[k] - 1]);
 
-                    if(k != m_turn)
+                    if(!m_move)
                     {
-                        m_dices[k].set_sprite_ptr(&m_dice_sprites[m_dice_values[k] - 1]);
+                        m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
                     }
                 };
 
@@ -161,41 +155,59 @@ ludo::match_scene::match_scene() :
         }
     }
 
-    m_button_lefts = {40.0f, 628.0f, 628.0f, 40.0f};
-    m_button_rights = {92.0f, 680.0f, 680.0f, 92.0f};
-    m_button_tops = {825.0f, 825.0f, 83.0f, 83.0f};
-    m_button_bots = {877.0f, 877.0f, 135.0f, 135.0f};
-
     m_board_sprite.setup_sprite("assets/board.png");
     m_coin_red_sprite.setup_sprite("assets/coins/coin_red.png");
     m_board.set_sprite_ptr(&m_board_sprite);
-    m_coin_red.set_sprite_ptr(&m_coin_red_sprite);
+
+    for(size_t i = 0; i < 4; ++i)
+    {
+        m_red_coins[i].set_sprite_ptr(&m_coin_red_sprite);
+        m_red_coins[i].local_transform.position = m_board_handler.const_blocks()[0]
+            .const_cells()[18 + i].const_position();
+        m_red_coins[i].local_transform.position.z = 0.01f;
+        m_red_coins[i].local_transform.scale /= 10.0f;
+    }
+
     m_board.local_transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
-    m_coin_red.local_transform.position = m_curren_cell_ptr->const_position();
-    m_coin_red.local_transform.position.z = 0.01f;
-    m_coin_red.local_transform.scale /= 10.0f;
     main_camera.transform.position.z = 3.5f;
 
-    m_gameobject_ptrs.insert(m_gameobject_ptrs.end(),
+    m_gameobject_ptrs.push_back(&m_board);
+
+    for(size_t i = 0; i < 4; ++i)
     {
-        &m_board,
-        &m_coin_red
-    });
+        m_gameobject_ptrs.push_back(&m_red_coins[i]);
+    }
 
     m_dices[0].callbacks.push_back([this]() -> void
     {
-        m_dices[0].active = false;
-        m_spinners[0].active = true;
+        if(m_move)
+        {
+            return;
+        }
 
-        m_spinner_animations[0]->play();
+        if(m_turn == 0)
+        {
+            m_dices[0].active = false;
+            m_spinners[0].active = true;
+
+            m_spinner_animations[0]->play();
+        }
     });
 
     m_dices[2].callbacks.push_back([this]() -> void
     {
-        m_dices[2].active = false;
-        m_spinners[2].active = true;
+        if(m_move)
+        {
+            return;
+        }
 
-        m_spinner_animations[2]->play();
+        if(m_turn == 2)
+        {
+            m_dices[2].active = false;
+            m_spinners[2].active = true;
+
+            m_spinner_animations[2]->play();
+        }
     });
 
     for(size_t i = 0; i < 4; ++i)
@@ -212,7 +224,54 @@ ludo::match_scene::match_scene() :
 
 void ludo::match_scene::on_update()
 {
-    
+    const ludo::input::status &current_mouse_status =
+        ludo::input::get_key(ludo::input::key::mouse_left);
+
+    if(m_move)
+    {
+        glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
+        mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width() - 1.0f;
+        mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height() + 1.0f;
+
+        for(size_t i = 0; i < 4; ++i)
+        {
+            if(m_previous_mouse_status == ludo::input::status::press
+                && current_mouse_status == ludo::input::status::release)
+            {
+                const glm::vec3 &position = m_red_coins[i].local_transform.position;
+                const glm::quat &rotation = m_red_coins[i].local_transform.rotation;
+                const glm::vec3 &scale = m_red_coins[i].local_transform.scale;
+                glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
+                local_transform *= glm::toMat4(rotation);
+                local_transform = glm::scale(local_transform, scale);
+                const glm::vec3 &cam_position = main_camera.transform.position;
+                const glm::quat &cam_rotation = main_camera.transform.rotation;
+                const glm::mat4x4 &rotation_mat = glm::toMat4(cam_rotation);
+                const glm::vec3 forward = rotation_mat * glm::vec4({0.0f, 0.0f, -1.0f, 1.0f});
+                const glm::vec3 up = rotation_mat * glm::vec4({0.0f, 1.0f, 0.0f, 1.0f});
+                const glm::mat4x4 view = glm::lookAt(cam_position, cam_position + forward, up);
+                const glm::mat4x4 pxv = main_camera.projection * view;
+                glm::vec4 position_vec4(position, 1.0f);
+                position_vec4 = pxv * local_transform * position_vec4;
+                position_vec4 /= position_vec4.w;
+                const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f)
+                    + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
+
+                if(distance <= 0.1f)
+                {
+                    m_move = false;
+                    m_turn += m_player_count;
+                    m_turn %= 4;
+
+                    m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+
+                    break;
+                }   
+            }
+        }
+    }
+
+    m_previous_mouse_status = current_mouse_status;
 }
 
 void ludo::match_scene::on_late_update()
