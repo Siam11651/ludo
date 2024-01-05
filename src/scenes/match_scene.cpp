@@ -50,64 +50,62 @@ ludo::match_scene::match_scene() :
             {
                 new_keyframe.on_reach = [this, k]() -> void
                 {
-                    this->m_dices[k].active = true;
-                    this->m_spinners[k].active = false;
-                    this->m_dice_values[k] = this->rand_gen() % 6 + 1;
-                    this->m_streak_dices[k][this->m_moves[k].size()].active = true;
+                    m_dices[k].active = true;
+                    m_spinners[k].active = false;
+                    m_dice_values[k] = rand_gen() % 6 + 1;
+                    m_streak_dices[k][m_moves[k].size()].active = true;
 
-                    if(this->m_moves[k].size() > 0 && this->m_moves[k].back() == 6)
+                    if(m_moves[k].size() > 0 && m_moves[k].back() == 6)
                     {
-                        this->m_moves[k].push_back(this->m_dice_values[k]);
+                        m_moves[k].push_back(m_dice_values[k]);
                     }
                     else
                     {
-                        this->m_moves[k] = {this->m_dice_values[k]};
+                        m_moves[k] = {m_dice_values[k]};
                     }
 
                     for(size_t j = 0; j < 3; ++j)
                     {
-                        if(j < this->m_moves[k].size())
+                        if(j < m_moves[k].size())
                         {
-                            this->m_streak_dices[k][j].active = true;
+                            m_streak_dices[k][j].active = true;
 
-                            this->m_streak_dices[k][j].set_sprite_ptr(
-                                &this->m_act_dice_sprites[this->m_moves[k][j] - 1]);
+                            m_streak_dices[k][j].set_sprite_ptr(
+                                &m_act_dice_sprites[m_moves[k][j] - 1]);
                         }
                         else
                         {
-                            this->m_streak_dices[k][j].active = false;
+                            m_streak_dices[k][j].active = false;
                         }
                     }
 
-                    if(this->m_moves[k].size() == 3)
+                    if(m_moves[k].size() == 3)
                     {
-                        if(this->m_moves[k].back() < 6)
+                        if(m_moves[k].back() < 6)
                         {
                             // let make move
                         }
                         else
                         {
-                            this->m_turn += this->m_player_count;
-                            this->m_turn %= 4;
+                            m_turn += m_player_count;
+                            m_turn %= 4;
                         }
 
-                        this->m_moves[k].clear();
+                        m_moves[k].clear();
                     }
-                    else if(this->m_moves[k].back() < 6)
+                    else if(m_moves[k].back() < 6)
                     {
                         // make move
 
-                        this->m_turn += this->m_player_count;
-                        this->m_turn %= 4;
+                        m_turn += m_player_count;
+                        m_turn %= 4;
                     }
 
-                    this->m_dices[this->m_turn].set_sprite_ptr(&this->m_act_dice_sprites[this
-                            ->m_dice_values[this->m_turn] - 1]);
+                    m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
 
-                    if(k != this->m_turn)
+                    if(k != m_turn)
                     {
-                        this->m_dices[k].set_sprite_ptr(&this->m_dice_sprites[this
-                            ->m_dice_values[k] - 1]);
+                        m_dices[k].set_sprite_ptr(&m_dice_sprites[m_dice_values[k] - 1]);
                     }
                 };
 
@@ -127,7 +125,7 @@ ludo::match_scene::match_scene() :
 
     for(size_t i = 0; i < 4; ++i)
     {
-        const glm::mat4x4 rotation_mat = glm::rotate(glm::identity<glm::mat4x4>(),
+        const glm::mat4 rotation_mat = glm::rotate(glm::identity<glm::mat4>(),
             (float)(M_PI * i) / 2.0f, glm::vec3(0.0f, 0.0f, 1.0f));
         glm::vec3 new_position = glm::vec3(rotation_mat
             * glm::vec4(-0.89f, -1.11f, 0.01f, 1.0f));
@@ -186,9 +184,25 @@ ludo::match_scene::match_scene() :
         &m_coin_red
     });
 
+    m_dices[0].callbacks.push_back([this]() -> void
+    {
+        m_dices[0].active = false;
+        m_spinners[0].active = true;
+
+        m_spinner_animations[0]->play();
+    });
+
+    m_dices[2].callbacks.push_back([this]() -> void
+    {
+        m_dices[2].active = false;
+        m_spinners[2].active = true;
+
+        m_spinner_animations[2]->play();
+    });
+
     for(size_t i = 0; i < 4; ++i)
     {
-        m_gameobject_ptrs.push_back(&m_dices[i]);
+        m_ui_element_ptrs.push_back(&m_dices[i]);
         m_gameobject_ptrs.push_back(&m_spinners[i]);
 
         for(size_t j = 0; j < 3; ++j)
@@ -196,48 +210,11 @@ ludo::match_scene::match_scene() :
             m_gameobject_ptrs.push_back(&m_streak_dices[i][j]);
         }
     }
-
-    m_dice_button.set_sprite_ptr(&m_act_dice_sprites.front());
-    m_dice_button.local_transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(45.0f)));
-
-    m_dice_button.callbacks.push_back([]() -> void
-    {
-        std::cout << "yay" << std::endl;
-    });
-
-    m_ui_element_ptrs.push_back(&m_dice_button);
 }
 
 void ludo::match_scene::on_update()
 {
-    const ludo::input::status current_status = ludo::input::get_key(ludo::input::key::mouse_left);
-
-    if(m_previous_status == ludo::input::status::press
-        && current_status == ludo::input::status::release)
-    {
-        const glm::vec2 &mouse_pos = ludo::input::get_mouse().const_position();
-
-        for(size_t i = 0; i < 4; ++i)
-        {
-            if(m_turn != i)
-            {
-                continue;
-            }
-
-            if(m_button_lefts[i] <= mouse_pos.x && mouse_pos.x <= m_button_rights[i]
-                && m_button_tops[i] <= mouse_pos.y && mouse_pos.y <= m_button_bots[i])
-            {
-                m_dices[i].active = false;
-                m_spinners[i].active = true;
-
-                m_spinner_animations[i]->play();
-
-                break;
-            }
-        }
-    }
-
-    m_previous_status = current_status;
+    
 }
 
 void ludo::match_scene::on_late_update()

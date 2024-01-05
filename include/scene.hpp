@@ -49,14 +49,11 @@ namespace ludo
 
     class event_listener : public gameobject
     {
-    private:
-        static ludo::input::status s_left_mouse_previous_status;
-
     public:
         std::vector<std::function<void()>> callbacks;
 
         event_listener();
-        void listen(const glm::mat4 &_global_transform);
+        void listen(const glm::vec4 &_mouse_pos);
         void execute_callbacks();
     };
 
@@ -70,6 +67,7 @@ namespace ludo
     {
     private:
         glm::mat4 m_ui_projection;
+        static ludo::input::status s_left_mouse_previous_status;
 
     protected:
         std::vector<ludo::gameobject *> m_gameobject_ptrs;

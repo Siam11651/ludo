@@ -3,7 +3,7 @@
 #include <glm/ext.hpp>
 #include <glm/gtx/quaternion.hpp>
 
-ludo::input::status ludo::event_listener::s_left_mouse_previous_status;
+ludo::input::status ludo::scene::s_left_mouse_previous_status;
 
 ludo::transform::transform() : 
     position(0.0f, 0.0f, 0.0f),
@@ -48,7 +48,7 @@ void ludo::gameobject::draw(const glm::mat4 &_global_transform) const
         const glm::vec3 &position = local_transform.position;
         const glm::quat &rotation = local_transform.rotation;
         const glm::vec3 &scale = local_transform.scale;
-        glm::mat4 local_transform = glm::translate(glm::identity<glm::mat4>(), position);
+        glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
         local_transform *= glm::toMat4(rotation);
         local_transform = glm::scale(local_transform, scale);
         const glm::mat4 new_global_transform = _global_transform * local_transform;
@@ -64,35 +64,23 @@ ludo::gameobject::~gameobject()
 
 ludo::event_listener::event_listener() {}
 
-void ludo::event_listener::listen(const glm::mat4 &_global_transform)
+void ludo::event_listener::listen(const glm::vec4 &_mouse_pos)
 {
-    const ludo::input::status current_status = ludo::input::get_key(ludo::input::key::mouse_left);
+    const glm::vec3 &position = local_transform.position;
+    const glm::quat &rotation = local_transform.rotation;
+    const glm::vec3 &scale = local_transform.scale;
+    const glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), -position);
+    const glm::mat4 local_rotation = glm::toMat4(-rotation);
+    const glm::mat4 local_scale = glm::inverse(glm::scale(glm::mat4(1.0f), scale));
+    glm::vec4 mouse_pos_vec4 = local_transform * _mouse_pos;
+    mouse_pos_vec4 = local_rotation * mouse_pos_vec4;
+    mouse_pos_vec4 = local_scale * mouse_pos_vec4;
 
-    if(s_left_mouse_previous_status == ludo::input::status::press
-        && current_status == ludo::input::status::release)
+    if(-0.5f <= mouse_pos_vec4.x && mouse_pos_vec4.x <= 0.5f
+        && -0.5f <= mouse_pos_vec4.y && mouse_pos_vec4.y <= 0.5f)
     {
-        const glm::vec3 &position = local_transform.position;
-        const glm::quat &rotation = local_transform.rotation;
-        const glm::vec3 &scale = local_transform.scale;
-        glm::mat4 local_transform = glm::translate(glm::identity<glm::mat4>(), position);
-        local_transform *= glm::toMat4(rotation);
-        local_transform = glm::scale(local_transform, scale);
-        const glm::mat4 new_global_transform = _global_transform * local_transform;
-        const glm::mat4 inverse_transform = glm::inverse(new_global_transform);
-        const glm::vec2 &mouse_pos = ludo::input::get_mouse().const_position();
-        glm::vec4 mouse_pos_vec4;
-        mouse_pos_vec4.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width() - 1.0f;
-        mouse_pos_vec4.y = (mouse_pos.y * 2.0f) / ludo::screen::window_height() - 1.0f;
-        mouse_pos_vec4 = inverse_transform * mouse_pos_vec4;
-
-        if(-0.5f <= mouse_pos_vec4.x && mouse_pos_vec4.x <= 0.5f
-            && -0.5f <= mouse_pos_vec4.y && mouse_pos_vec4.y <= 0.5f)
-        {
-            execute_callbacks();
-        }
+        execute_callbacks();
     }
-
-    s_left_mouse_previous_status = current_status;
 }
 
 void ludo::event_listener::execute_callbacks()
@@ -150,13 +138,28 @@ void ludo::scene::draw() const
 
 void ludo::scene::listen_events()
 {
-    for(ludo::gameobject *ui_element_ptr : m_ui_element_ptrs)
-    {
-        ludo::event_listener *event_listener_ptr = dynamic_cast<ludo::event_listener *>(ui_element_ptr);
+    const ludo::input::status current_status = ludo::input::get_key(ludo::input::key::mouse_left);
 
-        if(event_listener_ptr)
+    if(s_left_mouse_previous_status == ludo::input::status::press
+        && current_status == ludo::input::status::release)
+    {
+        const glm::vec2 &mouse_pos = ludo::input::get_mouse().const_position();
+        glm::vec4 mouse_pos_vec4(0.0f);
+        mouse_pos_vec4.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width() - 1.0f;
+        mouse_pos_vec4.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height() + 1.0f;
+        mouse_pos_vec4.w = 1.0f;
+        mouse_pos_vec4 = glm::inverse(m_ui_projection) * mouse_pos_vec4;
+
+        for(ludo::gameobject *ui_element_ptr : m_ui_element_ptrs)
         {
-            event_listener_ptr->listen(m_ui_projection);
-        }
+            ludo::event_listener *event_listener_ptr = dynamic_cast<ludo::event_listener *>(ui_element_ptr);
+
+            if(event_listener_ptr)
+            {
+                event_listener_ptr->listen(mouse_pos_vec4);
+            }
+        }   
     }
+
+    s_left_mouse_previous_status = current_status;
 }
