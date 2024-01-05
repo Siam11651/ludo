@@ -177,7 +177,7 @@ ludo::match_scene::match_scene() :
     m_coin_red.local_transform.position = m_curren_cell_ptr->const_position();
     m_coin_red.local_transform.position.z = 0.01f;
     m_coin_red.local_transform.scale /= 10.0f;
-    m_camera.transform.position.z = 3.5f;
+    camera.transform.position.z = 3.5f;
 
     m_gameobject_ptrs.insert(m_gameobject_ptrs.end(),
     {

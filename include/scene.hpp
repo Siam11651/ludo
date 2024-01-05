@@ -47,14 +47,12 @@ namespace ludo
     class scene
     {
     protected:
-        ludo::camera m_camera;
-        glm::mat4x4 projection;
         std::vector<ludo::gameobject *> m_gameobject_ptrs;
 
     public:
+        ludo::camera camera;
+
         scene();
-        ludo::camera &camera();
-        const ludo::camera &const_camera() const;
         void draw() const;
         virtual void on_update() = 0;
         virtual void on_late_update() = 0;

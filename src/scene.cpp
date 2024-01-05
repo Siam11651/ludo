@@ -58,25 +58,15 @@ void ludo::gameobject::draw(const glm::mat4x4 &_global_transform) const
 
 ludo::scene::scene() {}
 
-ludo::camera &ludo::scene::camera()
-{
-    return m_camera;
-}
-
-const ludo::camera &ludo::scene::const_camera() const
-{
-    return m_camera;
-}
-
 void ludo::scene::draw() const
 {
-    const glm::vec3 &position = m_camera.transform.position;
-    const glm::quat &rotation = m_camera.transform.rotation;
+    const glm::vec3 &position = camera.transform.position;
+    const glm::quat &rotation = camera.transform.rotation;
     const glm::mat4x4 &rotation_mat = glm::toMat4(rotation);
     const glm::vec3 forward = rotation_mat * glm::vec4({0.0f, 0.0f, -1.0f, 1.0f});
     const glm::vec3 up = rotation_mat * glm::vec4({0.0f, 1.0f, 0.0f, 1.0f});
     const glm::mat4x4 view = glm::lookAt(position, position + forward, up);
-    const glm::mat4x4 pxv = m_camera.projection * view;
+    const glm::mat4x4 pxv = camera.projection * view;
     
     for(ludo::gameobject *gameobject_ptr : m_gameobject_ptrs)
     {
