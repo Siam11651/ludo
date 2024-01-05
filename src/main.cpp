@@ -11,9 +11,9 @@
 
 int main()
 {
-    screen::window_width() = 720;
-    screen::window_height() = 960;
-    screen::window_title() = "Ludo";
+    ludo::screen::window_width() = 720;
+    ludo::screen::window_height() = 960;
+    ludo::screen::window_title() = "Ludo";
 
     if(!glfwInit())
     {
@@ -26,8 +26,9 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow *window = glfwCreateWindow(screen::window_width(), screen::window_height(),
-        screen::window_title().c_str(), nullptr, nullptr);
+    GLFWwindow *window = glfwCreateWindow(ludo::screen::window_width(),
+        ludo::screen::window_height(), ludo::screen::window_title().c_str(),
+        nullptr, nullptr);
 
     if(!window)
     {

@@ -1,25 +1,25 @@
 #include <screen.hpp>
 
-size_t screen::s_window_width;
-size_t screen::s_window_height;
-std::string screen::s_window_title;
+size_t ludo::screen::s_window_width;
+size_t ludo::screen::s_window_height;
+std::string ludo::screen::s_window_title;
 
-size_t &screen::window_width()
+size_t &ludo::screen::window_width()
 {
     return s_window_width;
 }
 
-size_t &screen::window_height()
+size_t &ludo::screen::window_height()
 {
     return s_window_height;
 }
 
-std::string &screen::window_title()
+std::string &ludo::screen::window_title()
 {
     return s_window_title;
 }
 
-float screen::aspect_ratio()
+float ludo::screen::aspect_ratio()
 {
     return (float)s_window_width / s_window_height;
 }
