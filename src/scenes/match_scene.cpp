@@ -15,6 +15,20 @@ void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
     local_transform.position = m_current_cell_ptr->position;
 }
 
+ludo::cell *ludo::coin_object::get_current_cell_ptr() const
+{
+    return m_current_cell_ptr;
+}
+
+void ludo::match_scene::change_turn()
+{
+    m_move = false;
+    m_turn += m_player_count;
+    m_turn %= 4;
+
+    m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+}
+
 ludo::match_scene::match_scene() :
     scene()
 {
@@ -251,12 +265,39 @@ void ludo::match_scene::on_late_update()
 
     if(m_move)
     {
-        if(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6) != m_moves[m_turn].end())
-        {
-            glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
-            mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
-            mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
+        glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
+        mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
+        mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
+        std::array<std::vector<uint8_t>, 4> legal_moves;
 
+        for(size_t i = 0; i < 4; ++i)
+        {
+            if(m_coins[m_turn][i].get_current_cell_ptr()->safety == 1)
+            {
+                if(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6)
+                    != m_moves[m_turn].end())
+                {
+                    legal_moves[i].push_back(6);
+                }
+            }
+            else
+            {
+                for(const uint8_t &move : m_moves[m_turn])
+                {
+                    legal_moves[i].push_back(move);
+                }
+            }
+        }
+
+        size_t legal_moves_count = 0;
+
+        for(const std::vector<uint8_t> &legal_move : legal_moves)
+        {
+            legal_moves_count += legal_move.size();
+        }
+
+        if(legal_moves_count > 0)
+        {
             for(size_t i = 0; i < 4; ++i)
             {
                 if(m_previous_mouse_status == ludo::input::status::press
@@ -281,16 +322,12 @@ void ludo::match_scene::on_late_update()
                     const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f)
                         + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
 
-                    if(distance <= 0.1f)
+                    if(distance <= 0.1f && !legal_moves[i].empty())
                     {
                         m_coins[m_turn][i].set_current_cell_ptr(&m_board_handler.blocks[m_turn]
                             .cells[7]);
 
-                        m_move = false;
-                        m_turn += m_player_count;
-                        m_turn %= 4;
-
-                        m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+                        change_turn();
 
                         break;
                     }   
@@ -299,12 +336,7 @@ void ludo::match_scene::on_late_update()
         }
         else
         {
-            m_move = false;
-
-            m_turn += m_player_count;
-            m_turn %= 4;
-
-            m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+            change_turn();
         }
     }
 

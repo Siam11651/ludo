@@ -18,6 +18,7 @@ namespace ludo
     public:
         coin_object();
         void set_current_cell_ptr(ludo::cell *_current_cell_ptr);
+        ludo::cell *get_current_cell_ptr() const;
     };
 
     class match_scene : public scene
@@ -43,6 +44,8 @@ namespace ludo
         ludo::gameobject m_board;
         std::array<ludo::gameobject, 4> m_spinners;
         std::array<std::array<ludo::coin_object, 4>, 4> m_coins;
+
+        void change_turn();
 
     public:
         match_scene();
