@@ -289,13 +289,6 @@ void ludo::match_scene::on_late_update()
         {
             m_move = false;
 
-            m_moves[m_turn].clear();
-
-            for(gameobject &streak_dice : m_streak_dices[m_turn])
-            {
-                streak_dice.active = false;
-            }
-
             m_turn += m_player_count;
             m_turn %= 4;
 
