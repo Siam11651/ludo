@@ -62,6 +62,8 @@ namespace ludo
         match_scene();
         void on_update();
         void on_late_update();
+        void cleanup();
+        ~match_scene();
     };
 }
 

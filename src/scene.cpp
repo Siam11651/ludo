@@ -163,3 +163,8 @@ void ludo::scene::listen_events()
 
     s_left_mouse_previous_status = current_status;
 }
+
+ludo::scene::~scene()
+{
+
+}

@@ -28,6 +28,7 @@ namespace ludo
         sprite(const std::string &_filepath);
         void setup_sprite(const std::string &_filepath);
         void draw(const glm::mat4x4 &_global_transform) const;
+        void cleanup();
         ~sprite();
         static void initialise();
     };

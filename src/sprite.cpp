@@ -85,6 +85,11 @@ void ludo::sprite::draw(const glm::mat4x4 &_global_transform) const
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
+void ludo::sprite::cleanup()
+{
+    glDeleteTextures(1, &m_texture);
+}
+
 ludo::sprite::~sprite()
 {
     stbi_image_free(m_data);

@@ -78,5 +78,9 @@ int main()
         ludo::time::end_frame();
     }
 
+    ((ludo::match_scene *)current_scene)->cleanup();
+
+    delete current_scene;
+
     return 0;
 }

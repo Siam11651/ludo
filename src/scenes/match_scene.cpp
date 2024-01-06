@@ -124,6 +124,7 @@ ludo::match_scene::match_scene() :
                         else
                         {
                             m_moves[k].clear();
+                            change_turn();
                         }
                     }
                     else if(m_moves[k].back() < 6)
@@ -200,7 +201,10 @@ ludo::match_scene::match_scene() :
 
                 for(uint8_t k = 0; k < value; ++k)
                 {
-                    m_coins[i][coin].set_current_cell_ptr(m_coins[i][coin].get_current_cell_ptr()->next_ptr);
+                    ludo::cell *current = m_coins[i][coin].get_current_cell_ptr();
+                    size_t idx = current->index;
+                    size_t block = current->block;
+                    m_coins[i][coin].set_current_cell_ptr(this->m_board_handler.get_next_cell_ptr(idx, block, i));
                 }
 
                 m_moves[i].erase(std::find(m_moves[i].begin(), m_moves[i].end(), value));
@@ -361,7 +365,10 @@ void ludo::match_scene::on_late_update()
 
                         if(in_home[i])
                         {
-                            m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i].get_current_cell_ptr()->next_ptr);
+                            ludo::cell *current = m_coins[m_turn][i].get_current_cell_ptr();
+                            size_t idx = current->index;
+                            size_t block = current->block;
+                            m_coins[m_turn][i].set_current_cell_ptr(m_board_handler.get_next_cell_ptr(idx, block, m_turn));
                             m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6));
                         }
                         else
@@ -380,7 +387,10 @@ void ludo::match_scene::on_late_update()
                             {
                                 for(size_t j = 0; j < legal_moves[i].back(); ++j)
                                 {
-                                    m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i].get_current_cell_ptr()->next_ptr);
+                                    ludo::cell *current = m_coins[m_turn][i].get_current_cell_ptr();
+                                    size_t idx = current->index;
+                                    size_t block = current->block;
+                                    m_coins[m_turn][i].set_current_cell_ptr(m_board_handler.get_next_cell_ptr(idx, block, m_turn));
                                 }
 
                                 m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), legal_moves[i].back()));
@@ -388,7 +398,7 @@ void ludo::match_scene::on_late_update()
                         }
 
                         break;
-                    }   
+                    }
                 }
             }
         }
@@ -399,4 +409,37 @@ void ludo::match_scene::on_late_update()
     }
 
     m_previous_mouse_status = current_mouse_status;
+}
+
+void ludo::match_scene::cleanup()
+{
+    for(ludo::sprite &sprite : m_dice_sprites)
+    {
+        sprite.cleanup();
+    }
+
+    for(ludo::sprite &sprite : m_act_dice_sprites)
+    {
+        sprite.cleanup();
+    }
+
+    for(ludo::sprite &sprite : m_spinner_sprites)
+    {
+        sprite.cleanup();
+    }
+
+    m_board_sprite.cleanup();
+
+    for(ludo::sprite &sprite : m_coin_sprites)
+    {
+        sprite.cleanup();
+    }
+}
+
+ludo::match_scene::~match_scene()
+{
+    for(ludo::animation *animation : m_spinner_animations)
+    {
+        delete animation;
+    }
 }

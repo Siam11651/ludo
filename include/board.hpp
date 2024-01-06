@@ -7,15 +7,15 @@
 namespace ludo
 {
     class cell
-    {    
+    {
     public:
         size_t index;
+        size_t block;
         uint8_t safety;
         glm::vec3 position;
-        cell *next_ptr;
 
         cell();
-        cell(const size_t &_index, const glm::vec3 &_position);
+        cell(const size_t &_index, const size_t &_block, const glm::vec3 &_position);
     };
 
     class block
@@ -30,13 +30,13 @@ namespace ludo
         float m_scale;
         ludo::block::color m_color;
 
-        void constructor_helper();
+        void constructor_helper(const size_t &_id);
 
     public:
         std::array<ludo::cell, 22> cells;
 
         block();
-        block(const float &_scale, const ludo::block::color &_color);
+        block(const size_t &_id, const float &_scale, const ludo::block::color &_color);
         void rotate(const float &_angle);
     };
 
@@ -52,6 +52,7 @@ namespace ludo
 
         board();
         board(const float &_scale);
+        ludo::cell *get_next_cell_ptr(const size_t &_current_idx, const size_t &_block, const size_t &_owner);
     };
 }
 

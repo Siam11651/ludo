@@ -2,16 +2,21 @@
 #include <glm/ext.hpp>
 
 ludo::cell::cell() :
-    next_ptr(nullptr),
     index(SIZE_MAX) {}
 
-ludo::cell::cell(const size_t &_index, const glm::vec3 &_position) :
-    next_ptr(nullptr),
+ludo::cell::cell(const size_t &_index, const size_t &_block, const glm::vec3 &_position) :
     index(_index),
+    block(_block),
     position(_position) {}
 
-void ludo::block::constructor_helper()
+void ludo::block::constructor_helper(const size_t &_id)
 {
+    for(size_t i = 0; i < cells.size(); ++i)
+    {
+        cells[i].index = i;
+        cells[i].block = _id;
+    }
+
     for(size_t i = 0; i < 6; ++i)
     {
         const float var_pos = (-4.0f / 15.0f - (2.0f * i) / 15.0f) * m_scale;
@@ -56,14 +61,14 @@ ludo::block::block() :
     m_scale(1.0f),
     m_color(ludo::block::color::red)
 {
-    constructor_helper();
+    constructor_helper(-1);
 }
 
-ludo::block::block(const float &_scale, const ludo::block::color &_color) :
+ludo::block::block(const size_t &_id, const float &_scale, const ludo::block::color &_color) :
     m_scale(_scale),
     m_color(_color)
 {
-    constructor_helper();
+    constructor_helper(_id);
 }
 
 void ludo::block::rotate(const float &_angle)
@@ -81,21 +86,9 @@ void ludo::board::constructor_helper()
 {
     for(size_t i = 0; i < 4; ++i)
     {
-        blocks[i] = ludo::block(m_scale, (ludo::block::color)i);
+        blocks[i] = ludo::block(i, m_scale, (ludo::block::color)i);
 
         blocks[i].rotate(i * M_PI / 2.0f);
-
-        for(size_t j = 5; j < 17; ++j)
-        {
-            blocks[i].cells[j].next_ptr = &blocks[i].cells[j + 1];
-        }
-
-        blocks[i].cells[17].next_ptr = &blocks[(i - 1) % 4].cells[5];
-
-        for(size_t j = 18; j < 22; ++j)
-        {
-            blocks[i].cells[j].next_ptr = &blocks[i].cells[7];
-        }
     }
 }
 
@@ -109,4 +102,39 @@ ludo::board::board(const float &_scale) :
     m_scale(_scale)
 {
     constructor_helper();
+}
+
+ludo::cell *ludo::board::get_next_cell_ptr(const size_t &_current_idx, const size_t &_current_block, const size_t &_owner)
+{
+    if(_current_idx == 0)
+    {
+
+    }
+    else if(_current_idx < 5)
+    {
+        return &blocks[_current_block].cells[_current_idx - 1];
+    }
+    else if(_current_idx == 5)
+    {
+        if(_current_block == _owner)
+        {
+            return &blocks[_current_block].cells[4];
+        }
+        else
+        {
+            return &blocks[_current_block].cells[6];
+        }
+    }
+    else if(_current_idx < 17)
+    {
+        return &blocks[_current_block].cells[_current_idx + 1];
+    }
+    else if(_current_idx == 17)
+    {
+        return &blocks[(_current_block - 1) % 4].cells[5];
+    }
+    else if(_current_idx < 22)
+    {
+        return &blocks[_current_block].cells[7];
+    }
 }

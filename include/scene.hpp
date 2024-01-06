@@ -82,6 +82,7 @@ namespace ludo
         virtual void on_late_update() = 0;
         void listen_events();
         void simulate_physics() const;
+        virtual ~scene();
     };
 }
 
