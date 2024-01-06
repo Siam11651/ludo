@@ -84,11 +84,18 @@ void ludo::board::constructor_helper()
         blocks[i] = ludo::block(m_scale, (ludo::block::color)i);
 
         blocks[i].rotate(i * M_PI / 2.0f);
-    }
 
-    for(size_t i = 18; i < 22; ++i)
-    {
-        blocks[i].cells[18].next_ptr = &blocks[i].cells[7];
+        for(size_t j = 5; j < 17; ++j)
+        {
+            blocks[i].cells[j].next_ptr = &blocks[i].cells[j + 1];
+        }
+
+        blocks[i].cells[17].next_ptr = &blocks[i + 1].cells[5];
+
+        for(size_t j = 18; j < 22; ++j)
+        {
+            blocks[i].cells[j].next_ptr = &blocks[i].cells[7];
+        }
     }
 }
 

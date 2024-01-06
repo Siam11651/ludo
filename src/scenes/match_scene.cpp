@@ -269,10 +269,13 @@ void ludo::match_scene::on_late_update()
         mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
         mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
         std::array<std::vector<uint8_t>, 4> legal_moves;
+        std::array<bool, 4> in_home;
 
         for(size_t i = 0; i < 4; ++i)
         {
-            if(m_coins[m_turn][i].get_current_cell_ptr()->safety == 1)
+            in_home[i] = m_coins[m_turn][i].get_current_cell_ptr()->safety == 1;
+
+            if(in_home[i])
             {
                 if(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6)
                     != m_moves[m_turn].end())
@@ -324,10 +327,17 @@ void ludo::match_scene::on_late_update()
 
                     if(distance <= 0.1f && !legal_moves[i].empty())
                     {
-                        m_coins[m_turn][i].set_current_cell_ptr(&m_board_handler.blocks[m_turn]
-                            .cells[7]);
+                        if(in_home[i])
+                        {
+                            m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i]
+                                .get_current_cell_ptr()->next_ptr);
+                        }
+                        else
+                        {
+                            
+                        }
 
-                        change_turn();
+                        // change_turn();
 
                         break;
                     }   
