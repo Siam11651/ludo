@@ -96,8 +96,10 @@ ludo::match_scene::match_scene() :
                         {
                             m_move = true;
                         }
-
-                        m_moves[k].clear();
+                        else
+                        {
+                            m_moves[k].clear();
+                        }
                     }
                     else if(m_moves[k].back() < 6)
                     {
@@ -163,15 +165,21 @@ ludo::match_scene::match_scene() :
     }
 
     m_board_sprite.setup_sprite("assets/board.png");
-    m_coin_red_sprite.setup_sprite("assets/coins/coin_red.png");
+    m_coin_sprites[0].setup_sprite("assets/coins/coin_red.png");
+    m_coin_sprites[1].setup_sprite("assets/coins/coin_blue.png");
+    m_coin_sprites[2].setup_sprite("assets/coins/coin_yellow.png");
+    m_coin_sprites[3].setup_sprite("assets/coins/coin_green.png");
     m_board.set_sprite_ptr(&m_board_sprite);
 
     for(size_t i = 0; i < 4; ++i)
     {
-        m_red_coins[i].set_sprite_ptr(&m_coin_red_sprite);
-        m_red_coins[i].set_current_cell_ptr(&m_board_handler.blocks[0].cells[18 + i]);
+        for(size_t j = 0; j < 4; ++j)
+        {
+            m_coins[i][j].set_sprite_ptr(&m_coin_sprites[i]);
+            m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
 
-        m_red_coins[i].local_transform.scale /= 10.0f;
+            m_coins[i][j].local_transform.scale /= 10.0f;
+        }
     }
 
     m_board.local_transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
@@ -181,7 +189,10 @@ ludo::match_scene::match_scene() :
 
     for(size_t i = 0; i < 4; ++i)
     {
-        m_gameobject_ptrs.push_back(&m_red_coins[i]);
+        for(size_t j = 0; j < 4; ++j)
+        {
+            m_gameobject_ptrs.push_back(&m_coins[i][j]);
+        }
     }
 
     m_dices[0].callbacks.push_back([this]() -> void
@@ -240,7 +251,7 @@ void ludo::match_scene::on_late_update()
 
     if(m_move)
     {
-        if(std::find(m_moves[0].begin(), m_moves[0].end(), 6) != m_moves[0].end())
+        if(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6) != m_moves[m_turn].end())
         {
             glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
             mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
@@ -251,9 +262,9 @@ void ludo::match_scene::on_late_update()
                 if(m_previous_mouse_status == ludo::input::status::press
                     && current_mouse_status == ludo::input::status::release)
                 {
-                    const glm::vec3 &position = m_red_coins[i].local_transform.position;
-                    const glm::quat &rotation = m_red_coins[i].local_transform.rotation;
-                    const glm::vec3 &scale = m_red_coins[i].local_transform.scale;
+                    const glm::vec3 &position = m_coins[m_turn][i].local_transform.position;
+                    const glm::quat &rotation = m_coins[m_turn][i].local_transform.rotation;
+                    const glm::vec3 &scale = m_coins[m_turn][i].local_transform.scale;
                     glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
                     local_transform *= glm::toMat4(rotation);
                     local_transform = glm::scale(local_transform, scale);
@@ -272,7 +283,8 @@ void ludo::match_scene::on_late_update()
 
                     if(distance <= 0.1f)
                     {
-                        m_red_coins[i].set_current_cell_ptr(&m_board_handler.blocks[0].cells[7]);
+                        m_coins[m_turn][i].set_current_cell_ptr(&m_board_handler.blocks[m_turn]
+                            .cells[7]);
 
                         m_move = false;
                         m_turn += m_player_count;

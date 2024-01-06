@@ -36,13 +36,13 @@ namespace ludo
         std::array<ludo::sprite, 6> m_act_dice_sprites;
         std::array<ludo::sprite, 15> m_spinner_sprites;
         ludo::sprite m_board_sprite;
-        ludo::sprite m_coin_red_sprite;
+        std::array<ludo::sprite, 4> m_coin_sprites;
         std::array<ludo::animation *, 4> m_spinner_animations;
         std::array<ludo::button, 4> m_dices;
         std::array<std::array<ludo::gameobject, 3>, 4> m_streak_dices;
         ludo::gameobject m_board;
         std::array<ludo::gameobject, 4> m_spinners;
-        std::array<ludo::coin_object, 4> m_red_coins;
+        std::array<std::array<ludo::coin_object, 4>, 4> m_coins;
 
     public:
         match_scene();
