@@ -44,12 +44,12 @@ void ludo::time::end_frame()
     s_delta_time_s = nanoseconds.count() / 1e9f;
 }
 
-const float &ludo::time::delta_time_s()
+const float &ludo::time::get_delta_time_s()
 {
     return s_delta_time_s;
 }
 
-int64_t ludo::time::now_ns()
+int64_t ludo::time::get_now_ns()
 {
     ludo::clk::time_point now_time_point(ludo::clk::now());
     ludo::clk::duration time_point_ns(now_time_point - s_start_time_point);
@@ -57,7 +57,7 @@ int64_t ludo::time::now_ns()
     return time_point_ns.count();
 }
 
-float ludo::time::now_s()
+float ludo::time::get_now_s()
 {
-    return now_ns() / 1e9f;
+    return get_now_ns() / 1e9f;
 }

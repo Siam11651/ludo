@@ -115,8 +115,6 @@ ludo::match_scene::match_scene() :
         }
     }
 
-    m_curren_cell_ptr = &m_board_handler.const_blocks().front().const_cells()[7];
-
     for(size_t i = 0; i < 4; ++i)
     {
         const glm::mat4 rotation_mat = glm::rotate(glm::identity<glm::mat4>(),
@@ -162,8 +160,8 @@ ludo::match_scene::match_scene() :
     for(size_t i = 0; i < 4; ++i)
     {
         m_red_coins[i].set_sprite_ptr(&m_coin_red_sprite);
-        m_red_coins[i].local_transform.position = m_board_handler.const_blocks()[0]
-            .const_cells()[18 + i].const_position();
+        m_red_coins[i].local_transform.position = m_board_handler.blocks[0]
+            .cells[18 + i].position;
         m_red_coins[i].local_transform.position.z = 0.01f;
         m_red_coins[i].local_transform.scale /= 10.0f;
     }
@@ -230,8 +228,8 @@ void ludo::match_scene::on_update()
     if(m_move)
     {
         glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
-        mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width() - 1.0f;
-        mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height() + 1.0f;
+        mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
+        mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
 
         for(size_t i = 0; i < 4; ++i)
         {
@@ -260,6 +258,14 @@ void ludo::match_scene::on_update()
                 if(distance <= 0.1f)
                 {
                     m_move = false;
+
+                    m_moves[m_turn].clear();
+
+                    for(gameobject &streak_dice : m_streak_dices[m_turn])
+                    {
+                        streak_dice.active = false;
+                    }
+
                     m_turn += m_player_count;
                     m_turn %= 4;
 

@@ -22,9 +22,9 @@ namespace ludo
         static void initialise();
         static void start_frame();
         static void end_frame();
-        static const float &delta_time_s();
-        static int64_t now_ns();
-        static float now_s();
+        static const float &get_delta_time_s();
+        static int64_t get_now_ns();
+        static float get_now_s();
     };
 }
 

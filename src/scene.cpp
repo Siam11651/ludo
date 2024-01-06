@@ -145,8 +145,8 @@ void ludo::scene::listen_events()
     {
         const glm::vec2 &mouse_pos = ludo::input::get_mouse().const_position();
         glm::vec4 mouse_pos_vec4(0.0f);
-        mouse_pos_vec4.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width() - 1.0f;
-        mouse_pos_vec4.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height() + 1.0f;
+        mouse_pos_vec4.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
+        mouse_pos_vec4.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
         mouse_pos_vec4.w = 1.0f;
         mouse_pos_vec4 = glm::inverse(m_ui_projection) * mouse_pos_vec4;
 
