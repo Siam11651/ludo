@@ -9,6 +9,9 @@
 ludo::coin_object::coin_object() :
     gameobject() {}
 
+ludo::dice_button::dice_button() :
+    button() {};
+
 void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
 {
     m_current_cell_ptr = _current_cell_ptr;
@@ -27,6 +30,14 @@ void ludo::match_scene::change_turn()
     m_turn %= 4;
 
     m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+}
+
+void ludo::match_scene::disable_input_dices()
+{
+    for(size_t i = 0; i < 3; ++i)
+    {
+        m_input_dices[m_turn][i].active = false;
+    }
 }
 
 ludo::match_scene::match_scene() :
@@ -175,6 +186,27 @@ ludo::match_scene::match_scene() :
 
             m_streak_dices[i][j].set_sprite_ptr(&m_dice_sprites.front());
             m_streak_dices[i][j].active = false;
+            new_position = glm::vec3(rotation_mat
+                * glm::vec4(-0.6f + j * 0.15f, -1.04f, 0.00f, 1.0f));
+            m_input_dices[i][j].local_transform.position = new_position;
+            m_input_dices[i][j].local_transform.scale /= 7.5f;
+
+            m_input_dices[i][j].set_sprite_ptr(&m_act_dice_sprites.front());
+            m_input_dices[i][j].active = false;
+            m_input_dices[i][j].callbacks.push_back([this, i, j]() -> void
+            {
+                const uint8_t &value = m_input_dices[i][j].value;
+                const uint8_t &coin = m_input_dices[i][j].coin;
+
+                for(uint8_t k = 0; k < value; ++k)
+                {
+                    m_coins[i][coin].set_current_cell_ptr(m_coins[i][coin].get_current_cell_ptr()->next_ptr);
+                }
+
+                m_moves[i].erase(std::find(m_moves[i].begin(), m_moves[i].end(), value));
+
+                disable_input_dices();
+            });
         }
     }
 
@@ -249,6 +281,7 @@ ludo::match_scene::match_scene() :
         for(size_t j = 0; j < 3; ++j)
         {
             m_ui_element_ptrs.push_back(&m_streak_dices[i][j]);
+            m_ui_element_ptrs.push_back(&m_input_dices[i][j]);
         }
     }
 }
@@ -267,6 +300,7 @@ void ludo::match_scene::on_late_update()
         glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
         mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
         mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
+        bool clicked = m_previous_mouse_status == ludo::input::status::press && current_mouse_status == ludo::input::status::release;
         std::array<std::vector<uint8_t>, 4> legal_moves;
         std::array<bool, 4> in_home;
 
@@ -301,7 +335,7 @@ void ludo::match_scene::on_late_update()
         {
             for(size_t i = 0; i < 4; ++i)
             {
-                if(m_previous_mouse_status == ludo::input::status::press && current_mouse_status == ludo::input::status::release)
+                if(!legal_moves[i].empty() && clicked)
                 {
                     const glm::vec3 &position = m_coins[m_turn][i].local_transform.position;
                     const glm::quat &rotation = m_coins[m_turn][i].local_transform.rotation;
@@ -321,8 +355,10 @@ void ludo::match_scene::on_late_update()
                     position_vec4 /= position_vec4.w;
                     const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f) + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
 
-                    if(distance <= 0.1f && !legal_moves[i].empty())
+                    if(distance <= 0.1f)
                     {
+                        disable_input_dices();
+
                         if(in_home[i])
                         {
                             m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i].get_current_cell_ptr()->next_ptr);
@@ -332,7 +368,13 @@ void ludo::match_scene::on_late_update()
                         {
                             if(legal_moves[i].size() > 1)
                             {
-                                
+                                for(size_t j = 0; j < legal_moves[i].size(); ++j)
+                                {
+                                    m_input_dices[m_turn][j].active = true;
+                                    m_input_dices[m_turn][j].set_sprite_ptr(&m_act_dice_sprites[legal_moves[i][j] - 1]);
+                                    m_input_dices[m_turn][j].value = legal_moves[i][j];
+                                    m_input_dices[m_turn][j].coin = i;
+                                }
                             }
                             else
                             {

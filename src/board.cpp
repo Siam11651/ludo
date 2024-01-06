@@ -90,7 +90,7 @@ void ludo::board::constructor_helper()
             blocks[i].cells[j].next_ptr = &blocks[i].cells[j + 1];
         }
 
-        blocks[i].cells[17].next_ptr = &blocks[i + 1].cells[5];
+        blocks[i].cells[17].next_ptr = &blocks[(i - 1) % 4].cells[5];
 
         for(size_t j = 18; j < 22; ++j)
         {

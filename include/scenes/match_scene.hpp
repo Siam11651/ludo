@@ -21,6 +21,15 @@ namespace ludo
         ludo::cell *get_current_cell_ptr() const;
     };
 
+    class dice_button : public button
+    {
+    public:
+        uint8_t value;
+        uint8_t coin;
+
+        dice_button();
+    };
+
     class match_scene : public scene
     {
     private:
@@ -41,11 +50,13 @@ namespace ludo
         std::array<ludo::animation *, 4> m_spinner_animations;
         std::array<ludo::button, 4> m_dices;
         std::array<std::array<ludo::gameobject, 3>, 4> m_streak_dices;
+        std::array<std::array<ludo::dice_button, 3>, 4> m_input_dices;
         ludo::gameobject m_board;
         std::array<ludo::gameobject, 4> m_spinners;
         std::array<std::array<ludo::coin_object, 4>, 4> m_coins;
 
         void change_turn();
+        void disable_input_dices();
 
     public:
         match_scene();
