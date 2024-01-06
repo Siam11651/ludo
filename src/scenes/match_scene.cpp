@@ -260,8 +260,7 @@ void ludo::match_scene::on_update()
 
 void ludo::match_scene::on_late_update()
 {
-    const ludo::input::status &current_mouse_status =
-        ludo::input::get_key(ludo::input::key::mouse_left);
+    const ludo::input::status &current_mouse_status = ludo::input::get_key(ludo::input::key::mouse_left);
 
     if(m_move)
     {
@@ -277,8 +276,7 @@ void ludo::match_scene::on_late_update()
 
             if(in_home[i])
             {
-                if(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6)
-                    != m_moves[m_turn].end())
+                if(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6) != m_moves[m_turn].end())
                 {
                     legal_moves[i].push_back(6);
                 }
@@ -303,8 +301,7 @@ void ludo::match_scene::on_late_update()
         {
             for(size_t i = 0; i < 4; ++i)
             {
-                if(m_previous_mouse_status == ludo::input::status::press
-                    && current_mouse_status == ludo::input::status::release)
+                if(m_previous_mouse_status == ludo::input::status::press && current_mouse_status == ludo::input::status::release)
                 {
                     const glm::vec3 &position = m_coins[m_turn][i].local_transform.position;
                     const glm::quat &rotation = m_coins[m_turn][i].local_transform.rotation;
@@ -322,40 +319,31 @@ void ludo::match_scene::on_late_update()
                     glm::vec4 position_vec4(position, 1.0f);
                     position_vec4 = pxv * local_transform * position_vec4;
                     position_vec4 /= position_vec4.w;
-                    const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f)
-                        + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
+                    const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f) + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
 
                     if(distance <= 0.1f && !legal_moves[i].empty())
                     {
                         if(in_home[i])
                         {
-                            m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i]
-                                .get_current_cell_ptr()->next_ptr);
-
-                            m_moves[m_turn].erase(std::remove(m_moves[m_turn].begin(),
-                                m_moves[m_turn].end(), 6), m_moves[m_turn].end());
+                            m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i].get_current_cell_ptr()->next_ptr);
+                            m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6));
                         }
                         else
                         {
                             if(legal_moves[i].size() > 1)
                             {
-
+                                
                             }
                             else
                             {
                                 for(size_t j = 0; j < legal_moves[i].back(); ++j)
                                 {
-                                    m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i]
-                                        .get_current_cell_ptr()->next_ptr);
+                                    m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i].get_current_cell_ptr()->next_ptr);
                                 }
 
-                                m_moves[m_turn].erase(std::remove(m_moves[m_turn].begin(),
-                                    m_moves[m_turn].end(), legal_moves[i].back()),m_moves[m_turn]
-                                    .end());
+                                m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), legal_moves[i].back()));
                             }
                         }
-
-                        // change_turn();
 
                         break;
                     }   
