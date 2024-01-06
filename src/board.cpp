@@ -2,9 +2,11 @@
 #include <glm/ext.hpp>
 
 ludo::cell::cell() :
+    next_ptr(nullptr),
     index(SIZE_MAX) {}
 
 ludo::cell::cell(const size_t &_index, const glm::vec3 &_position) :
+    next_ptr(nullptr),
     index(_index),
     position(_position) {}
 
@@ -43,6 +45,11 @@ void ludo::block::constructor_helper()
     {
         cells[i].safety = 1;
     }
+
+    for(ludo::cell &cell : cells)
+    {
+        cell.position.z = 0.01f;
+    }
 }
 
 ludo::block::block() :
@@ -77,6 +84,11 @@ void ludo::board::constructor_helper()
         blocks[i] = ludo::block(m_scale, (ludo::block::color)i);
 
         blocks[i].rotate(i * M_PI / 2.0f);
+    }
+
+    for(size_t i = 18; i < 22; ++i)
+    {
+        blocks[i].cells[18].next_ptr = &blocks[i].cells[7];
     }
 }
 

@@ -10,6 +10,16 @@
 
 namespace ludo
 {
+    class coin_object : public gameobject
+    {
+    private:
+        ludo::cell *m_current_cell_ptr;
+
+    public:
+        coin_object();
+        void set_current_cell_ptr(ludo::cell *_current_cell_ptr);
+    };
+
     class match_scene : public scene
     {
     private:
@@ -32,7 +42,7 @@ namespace ludo
         std::array<std::array<ludo::gameobject, 3>, 4> m_streak_dices;
         ludo::gameobject m_board;
         std::array<ludo::gameobject, 4> m_spinners;
-        std::array<ludo::gameobject, 4> m_red_coins;
+        std::array<ludo::coin_object, 4> m_red_coins;
 
     public:
         match_scene();

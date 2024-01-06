@@ -12,6 +12,7 @@ namespace ludo
         size_t index;
         uint8_t safety;
         glm::vec3 position;
+        cell *next_ptr;
 
         cell();
         cell(const size_t &_index, const glm::vec3 &_position);

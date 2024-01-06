@@ -6,6 +6,15 @@
 #include <input.hpp>
 #include <iostream>
 
+ludo::coin_object::coin_object() :
+    gameobject() {}
+
+void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
+{
+    m_current_cell_ptr = _current_cell_ptr;
+    local_transform.position = m_current_cell_ptr->position;
+}
+
 ludo::match_scene::match_scene() :
     scene()
 {
@@ -160,9 +169,8 @@ ludo::match_scene::match_scene() :
     for(size_t i = 0; i < 4; ++i)
     {
         m_red_coins[i].set_sprite_ptr(&m_coin_red_sprite);
-        m_red_coins[i].local_transform.position = m_board_handler.blocks[0]
-            .cells[18 + i].position;
-        m_red_coins[i].local_transform.position.z = 0.01f;
+        m_red_coins[i].set_current_cell_ptr(&m_board_handler.blocks[0].cells[18 + i]);
+
         m_red_coins[i].local_transform.scale /= 10.0f;
     }
 
@@ -222,65 +230,78 @@ ludo::match_scene::match_scene() :
 
 void ludo::match_scene::on_update()
 {
+    
+}
+
+void ludo::match_scene::on_late_update()
+{
     const ludo::input::status &current_mouse_status =
         ludo::input::get_key(ludo::input::key::mouse_left);
 
     if(m_move)
     {
-        glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
-        mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
-        mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
-
-        for(size_t i = 0; i < 4; ++i)
+        if(std::find(m_moves[0].begin(), m_moves[0].end(), 6) != m_moves[0].end())
         {
-            if(m_previous_mouse_status == ludo::input::status::press
-                && current_mouse_status == ludo::input::status::release)
+            glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
+            mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
+            mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
+
+            for(size_t i = 0; i < 4; ++i)
             {
-                const glm::vec3 &position = m_red_coins[i].local_transform.position;
-                const glm::quat &rotation = m_red_coins[i].local_transform.rotation;
-                const glm::vec3 &scale = m_red_coins[i].local_transform.scale;
-                glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
-                local_transform *= glm::toMat4(rotation);
-                local_transform = glm::scale(local_transform, scale);
-                const glm::vec3 &cam_position = main_camera.transform.position;
-                const glm::quat &cam_rotation = main_camera.transform.rotation;
-                const glm::mat4x4 &rotation_mat = glm::toMat4(cam_rotation);
-                const glm::vec3 forward = rotation_mat * glm::vec4({0.0f, 0.0f, -1.0f, 1.0f});
-                const glm::vec3 up = rotation_mat * glm::vec4({0.0f, 1.0f, 0.0f, 1.0f});
-                const glm::mat4x4 view = glm::lookAt(cam_position, cam_position + forward, up);
-                const glm::mat4x4 pxv = main_camera.projection * view;
-                glm::vec4 position_vec4(position, 1.0f);
-                position_vec4 = pxv * local_transform * position_vec4;
-                position_vec4 /= position_vec4.w;
-                const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f)
-                    + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
-
-                if(distance <= 0.1f)
+                if(m_previous_mouse_status == ludo::input::status::press
+                    && current_mouse_status == ludo::input::status::release)
                 {
-                    m_move = false;
+                    const glm::vec3 &position = m_red_coins[i].local_transform.position;
+                    const glm::quat &rotation = m_red_coins[i].local_transform.rotation;
+                    const glm::vec3 &scale = m_red_coins[i].local_transform.scale;
+                    glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
+                    local_transform *= glm::toMat4(rotation);
+                    local_transform = glm::scale(local_transform, scale);
+                    const glm::vec3 &cam_position = main_camera.transform.position;
+                    const glm::quat &cam_rotation = main_camera.transform.rotation;
+                    const glm::mat4x4 &rotation_mat = glm::toMat4(cam_rotation);
+                    const glm::vec3 forward = rotation_mat * glm::vec4({0.0f, 0.0f, -1.0f, 1.0f});
+                    const glm::vec3 up = rotation_mat * glm::vec4({0.0f, 1.0f, 0.0f, 1.0f});
+                    const glm::mat4x4 view = glm::lookAt(cam_position, cam_position + forward, up);
+                    const glm::mat4x4 pxv = main_camera.projection * view;
+                    glm::vec4 position_vec4(position, 1.0f);
+                    position_vec4 = pxv * local_transform * position_vec4;
+                    position_vec4 /= position_vec4.w;
+                    const float distance = std::sqrt(std::pow(mouse_pos.x - position_vec4.x, 2.0f)
+                        + std::pow(mouse_pos.y - position_vec4.y, 2.0f));
 
-                    m_moves[m_turn].clear();
-
-                    for(gameobject &streak_dice : m_streak_dices[m_turn])
+                    if(distance <= 0.1f)
                     {
-                        streak_dice.active = false;
-                    }
+                        m_red_coins[i].set_current_cell_ptr(&m_board_handler.blocks[0].cells[7]);
 
-                    m_turn += m_player_count;
-                    m_turn %= 4;
+                        m_move = false;
+                        m_turn += m_player_count;
+                        m_turn %= 4;
 
-                    m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
+                        m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
 
-                    break;
-                }   
+                        break;
+                    }   
+                }
             }
+        }
+        else
+        {
+            m_move = false;
+
+            m_moves[m_turn].clear();
+
+            for(gameobject &streak_dice : m_streak_dices[m_turn])
+            {
+                streak_dice.active = false;
+            }
+
+            m_turn += m_player_count;
+            m_turn %= 4;
+
+            m_dices[m_turn].set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
         }
     }
 
     m_previous_mouse_status = current_mouse_status;
-}
-
-void ludo::match_scene::on_late_update()
-{
-
 }
