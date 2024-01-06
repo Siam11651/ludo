@@ -331,10 +331,28 @@ void ludo::match_scene::on_late_update()
                         {
                             m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i]
                                 .get_current_cell_ptr()->next_ptr);
+
+                            m_moves[m_turn].erase(std::remove(m_moves[m_turn].begin(),
+                                m_moves[m_turn].end(), 6), m_moves[m_turn].end());
                         }
                         else
                         {
-                            
+                            if(legal_moves[i].size() > 1)
+                            {
+
+                            }
+                            else
+                            {
+                                for(size_t j = 0; j < legal_moves[i].back(); ++j)
+                                {
+                                    m_coins[m_turn][i].set_current_cell_ptr(m_coins[m_turn][i]
+                                        .get_current_cell_ptr()->next_ptr);
+                                }
+
+                                m_moves[m_turn].erase(std::remove(m_moves[m_turn].begin(),
+                                    m_moves[m_turn].end(), legal_moves[i].back()),m_moves[m_turn]
+                                    .end());
+                            }
                         }
 
                         // change_turn();
