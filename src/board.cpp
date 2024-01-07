@@ -2,9 +2,11 @@
 #include <glm/ext.hpp>
 
 ludo::cell::cell() :
+    safe(false),
     index(SIZE_MAX) {}
 
 ludo::cell::cell(const size_t &_index, const size_t &_block, const glm::vec3 &_position) :
+    safe(false),
     index(_index),
     block(_block),
     position(_position) {}
@@ -21,11 +23,11 @@ void ludo::block::constructor_helper(const size_t &_id)
     {
         const float var_pos = (-4.0f / 15.0f - (2.0f * i) / 15.0f) * m_scale;
         const float fix_pos = (-2.0f / 15.0f) * m_scale;
-        cells[i].position.y = var_pos;
+        cells[i].position = glm::vec3(0.0f, var_pos, 0.0f);
 
         if(i < 5)
         {
-            cells[i].safety = 1;
+            cells[i].safe = true;
         }
 
         cells[11 - i].position.y = var_pos;
@@ -34,8 +36,8 @@ void ludo::block::constructor_helper(const size_t &_id)
         cells[12 + i].position.y = fix_pos;
     }
 
-    cells[7].safety = 2;
-    cells[15].safety = 2;
+    cells[7].safe = true;
+    cells[15].safe = true;
     const float home_pos[2] = {(-7.0f / 15.0f) * m_scale, (-11.0f / 15.0f) * m_scale};
     cells[18].position.x = home_pos[1];
     cells[18].position.y = home_pos[1];
@@ -45,10 +47,15 @@ void ludo::block::constructor_helper(const size_t &_id)
     cells[20].position.y = home_pos[0];
     cells[21].position.x = home_pos[1];
     cells[21].position.y = home_pos[0];
+    cells[22].position = glm::vec3(0.0f, -0.1f, 0.0f);
+    cells[23].position = glm::vec3(0.0f, -0.15f, 0.0f);
+    cells[24].position = glm::vec3(-0.075f, -0.15f, 0.0f);
+    cells[25].position = glm::vec3(0.075f, -0.15f, 0.0f);
 
     for(size_t i = 18; i < 22; ++i)
     {
-        cells[i].safety = 1;
+        cells[i].safe = true;
+        cells[i + 4].safe = true;
     }
 
     for(ludo::cell &cell : cells)
@@ -104,11 +111,11 @@ ludo::board::board(const float &_scale) :
     constructor_helper();
 }
 
-ludo::cell *ludo::board::get_next_cell_ptr(const size_t &_current_idx, const size_t &_current_block, const size_t &_owner)
+ludo::cell *ludo::board::get_next_cell_ptr(const size_t &_current_idx, const size_t &_current_block, const size_t &_owner, const size_t &_coin_idx)
 {
     if(_current_idx == 0)
     {
-
+        return &blocks[_current_block].cells[22 + _coin_idx];
     }
     else if(_current_idx < 5)
     {
@@ -137,4 +144,6 @@ ludo::cell *ludo::board::get_next_cell_ptr(const size_t &_current_idx, const siz
     {
         return &blocks[_current_block].cells[7];
     }
+
+    return nullptr;
 }

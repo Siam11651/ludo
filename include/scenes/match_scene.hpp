@@ -16,6 +16,8 @@ namespace ludo
         ludo::cell *m_current_cell_ptr;
 
     public:
+        bool finished;
+
         coin_object();
         void set_current_cell_ptr(ludo::cell *_current_cell_ptr);
         ludo::cell *get_current_cell_ptr() const;
@@ -43,6 +45,7 @@ namespace ludo
         const ludo::cell *m_curren_cell_ptr;
         ludo::input::status m_previous_status;
         std::array<ludo::sprite, 6> m_dice_sprites;
+        std::array<ludo::sprite, 6> m_semi_act_dice_sprites;
         std::array<ludo::sprite, 6> m_act_dice_sprites;
         std::array<ludo::sprite, 15> m_spinner_sprites;
         ludo::sprite m_board_sprite;
@@ -54,9 +57,11 @@ namespace ludo
         ludo::gameobject m_board;
         std::array<ludo::gameobject, 4> m_spinners;
         std::array<std::array<ludo::coin_object, 4>, 4> m_coins;
+        ludo::gameobject m_test_coin;
 
         void change_turn();
         void disable_input_dices();
+        void make_move(const uint8_t &_value, const uint8_t &_coin);
 
     public:
         match_scene();

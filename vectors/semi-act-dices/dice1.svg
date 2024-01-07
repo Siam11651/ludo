@@ -8,7 +8,7 @@
    version="1.1"
    id="svg1"
    inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
-   sodipodi:docname="dice2.svg"
+   sodipodi:docname="dice1.svg"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -25,7 +25,7 @@
      inkscape:document-units="px"
      inkscape:zoom="1.0053654"
      inkscape:cx="214.34993"
-     inkscape:cy="342.16415"
+     inkscape:cy="341.16949"
      inkscape:window-width="1920"
      inkscape:window-height="1002"
      inkscape:window-x="0"
@@ -57,7 +57,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke:#ffd700;stroke-width:16.1183;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
+       style="fill:#ffffff;fill-opacity:0.75;stroke:#ffd700;stroke-width:16.1183;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="rect1"
        width="153.21503"
        height="153.215"
@@ -67,14 +67,8 @@
     <circle
        style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.71707;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
        id="path1"
-       cx="66.706139"
-       cy="66.706139"
-       r="12.7" />
-    <circle
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.71707;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       id="path1-5"
-       cx="102.62724"
-       cy="102.62724"
+       cx="84.666664"
+       cy="84.666664"
        r="12.7" />
   </g>
 </svg>

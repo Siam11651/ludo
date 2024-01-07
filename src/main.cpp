@@ -19,6 +19,8 @@ int main()
     {
         std::cerr << "Failed to initialise GLFW" << std::endl;
 
+        glfwTerminate();
+
         return -1;
     }
 
@@ -34,6 +36,8 @@ int main()
     {
         std::cerr << "Failed to create window" << std::endl;
 
+        glfwTerminate();
+
         return -1;
     }
 
@@ -42,6 +46,8 @@ int main()
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
         std::cerr << "Failed to initialise GLAD" << std::endl;
+
+        glfwTerminate();
 
         return -1;
     }
@@ -81,6 +87,8 @@ int main()
     ((ludo::match_scene *)current_scene)->cleanup();
 
     delete current_scene;
+
+    glfwTerminate();
 
     return 0;
 }

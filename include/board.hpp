@@ -11,7 +11,7 @@ namespace ludo
     public:
         size_t index;
         size_t block;
-        uint8_t safety;
+        bool safe;
         glm::vec3 position;
 
         cell();
@@ -33,7 +33,7 @@ namespace ludo
         void constructor_helper(const size_t &_id);
 
     public:
-        std::array<ludo::cell, 22> cells;
+        std::array<ludo::cell, 26> cells;
 
         block();
         block(const size_t &_id, const float &_scale, const ludo::block::color &_color);
@@ -52,7 +52,7 @@ namespace ludo
 
         board();
         board(const float &_scale);
-        ludo::cell *get_next_cell_ptr(const size_t &_current_idx, const size_t &_block, const size_t &_owner);
+        ludo::cell *get_next_cell_ptr(const size_t &_current_idx, const size_t &_block, const size_t &_owner, const size_t &_coin_idx);
     };
 }
 
