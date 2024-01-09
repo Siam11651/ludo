@@ -24,6 +24,8 @@ void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
         if(22 <= m_current_cell_ptr->index)
         {
             finished = true;
+
+            
         }
     }
 }
@@ -283,6 +285,7 @@ ludo::match_scene::match_scene() : scene()
     {
         for(size_t j = 0; j < 4; ++j)
         {
+            m_finished_coin_count[i][j] = 0;
             m_coins[i][j].set_sprite_ptr(&m_coin_sprites[i]);
             m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
             // m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);
@@ -358,11 +361,26 @@ ludo::match_scene::match_scene() : scene()
 
 void ludo::match_scene::on_update()
 {
-    
-}
+    for(size_t i = 0; i < 4; ++i)
+    {
+        size_t finished_count = 0;
 
-void ludo::match_scene::on_late_update()
-{
+        for(size_t j = 0; j < 4; ++j)
+        {
+            if(m_coins[i][j].finished)
+            {
+                ++finished_count;
+            }
+        }
+
+        if(finished_count == 4)
+        {
+            std::cout << "Player " << i + 1 << " won" << std::endl;
+
+            ludo::scene_manager::set_current_scene(nullptr);
+        }
+    }
+
     const ludo::input::status &current_mouse_status = ludo::input::get_key(ludo::input::key::mouse_left);
 
     if(m_move)
@@ -378,7 +396,7 @@ void ludo::match_scene::on_late_update()
         {
             const size_t &cell_index = m_coins[m_turn][i].get_current_cell_ptr()->index;
 
-            if(18 <= cell_index && cell_index <= 21)
+            if(18 <= cell_index && cell_index <= 25)
             {
                 in_home[i] = true;
             }
@@ -481,29 +499,9 @@ void ludo::match_scene::on_late_update()
     m_previous_mouse_status = current_mouse_status;
 }
 
-void ludo::match_scene::cleanup()
+void ludo::match_scene::on_late_update()
 {
-    for(ludo::sprite &sprite : m_dice_sprites)
-    {
-        sprite.cleanup();
-    }
 
-    for(ludo::sprite &sprite : m_act_dice_sprites)
-    {
-        sprite.cleanup();
-    }
-
-    for(ludo::sprite &sprite : m_spinner_sprites)
-    {
-        sprite.cleanup();
-    }
-
-    m_board_sprite.cleanup();
-
-    for(ludo::sprite &sprite : m_coin_sprites)
-    {
-        sprite.cleanup();
-    }
 }
 
 ludo::match_scene::~match_scene()

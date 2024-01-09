@@ -4,6 +4,8 @@
 #include <glm/gtx/quaternion.hpp>
 
 ludo::input::status ludo::scene::s_left_mouse_previous_status;
+ludo::scene *ludo::scene_manager::s_previous_scene = nullptr;
+ludo::scene *ludo::scene_manager::s_current_scene = nullptr;
 
 ludo::transform::transform() : 
     position(0.0f, 0.0f, 0.0f),
@@ -167,4 +169,25 @@ void ludo::scene::listen_events()
 ludo::scene::~scene()
 {
 
+}
+
+void ludo::scene_manager::cleanup_previous_scene()
+{
+    if(s_previous_scene)
+    {
+        delete s_previous_scene;
+
+        s_previous_scene = nullptr;
+    }
+}
+
+void ludo::scene_manager::set_current_scene(ludo::scene *_scene)
+{
+    s_previous_scene = s_current_scene;
+    s_current_scene = _scene;
+}
+
+ludo::scene *ludo::scene_manager::get_current_scene()
+{
+    return s_current_scene;
 }

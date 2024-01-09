@@ -56,6 +56,7 @@ namespace ludo
         std::array<std::array<ludo::dice_button, 3>, 4> m_input_dices;
         ludo::gameobject m_board;
         std::array<ludo::gameobject, 4> m_spinners;
+        std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;
         std::array<std::array<ludo::coin_object, 4>, 4> m_coins;
         ludo::gameobject m_test_coin;
 
@@ -67,7 +68,6 @@ namespace ludo
         match_scene();
         void on_update();
         void on_late_update();
-        void cleanup();
         ~match_scene();
     };
 }

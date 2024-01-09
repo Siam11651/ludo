@@ -57,7 +57,7 @@ int main()
     glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     ludo::sprite::initialise();
 
-    ludo::scene *current_scene = new ludo::match_scene();
+    ludo::scene_manager::set_current_scene(new ludo::match_scene());
     // ludo::scene *current_scene = new ludo::test_scene();
     double mouse_pos_x;
     double mouse_pos_y;
@@ -65,29 +65,34 @@ int main()
     while(!glfwWindowShouldClose(window))
     {
         ludo::time::start_frame();
+        ludo::scene_manager::cleanup_previous_scene();
         glfwPollEvents();
         glfwGetCursorPos(window, &mouse_pos_x, &mouse_pos_y);
 
-        int32_t mouse_left_status = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
-        ludo::input::mouse new_mouse;
-        new_mouse.position() = glm::vec2(mouse_pos_x, mouse_pos_y);
+        ludo::scene *current_scene = ludo::scene_manager::get_current_scene();
 
-        ludo::input::set_key(ludo::input::key::mouse_left, (ludo::input::status)mouse_left_status);
-        ludo::input::set_mouse(new_mouse);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        current_scene->on_update();
-        ludo::animation::animate();
-        current_scene->draw();
-        current_scene->on_late_update();
-        current_scene->listen_events();
+        if(current_scene)
+        {
+            int32_t mouse_left_status = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+            ludo::input::mouse new_mouse;
+            new_mouse.position() = glm::vec2(mouse_pos_x, mouse_pos_y);
+
+            ludo::input::set_key(ludo::input::key::mouse_left, (ludo::input::status)mouse_left_status);
+            ludo::input::set_mouse(new_mouse);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            current_scene->on_update();
+            ludo::animation::animate();
+            current_scene->draw();
+            current_scene->on_late_update();
+            current_scene->listen_events();
+        }
+
         glfwSwapBuffers(window);
         ludo::time::end_frame();
     }
 
-    ((ludo::match_scene *)current_scene)->cleanup();
-
-    delete current_scene;
-
+    ludo::scene_manager::set_current_scene(nullptr);
+    ludo::scene_manager::cleanup_previous_scene();
     glfwTerminate();
 
     return 0;

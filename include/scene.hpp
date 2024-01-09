@@ -84,6 +84,18 @@ namespace ludo
         void simulate_physics() const;
         virtual ~scene();
     };
+
+    class scene_manager
+    {
+    private:
+        static ludo::scene *s_previous_scene;
+        static ludo::scene *s_current_scene;
+
+    public:
+        static void cleanup_previous_scene();
+        static void set_current_scene(ludo::scene *_scene);
+        static ludo::scene *get_current_scene();
+    };
 }
 
 #endif
