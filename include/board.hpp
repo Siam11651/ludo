@@ -2,10 +2,13 @@
 #define BOARD_H
 
 #include <array>
+#include <vector>
 #include <glm/glm.hpp>
 
 namespace ludo
 {
+    class coin_object;
+
     class cell
     {
     public:
@@ -13,9 +16,11 @@ namespace ludo
         size_t block;
         bool safe;
         glm::vec3 position;
+        std::vector<ludo::coin_object *> coin_ptrs;
 
         cell();
         cell(const size_t &_index, const size_t &_block, const glm::vec3 &_position);
+        void place_coins();
     };
 
     class block

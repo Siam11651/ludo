@@ -1,4 +1,5 @@
 #include <board.hpp>
+#include <scenes/match_scene.hpp>
 #include <glm/ext.hpp>
 
 ludo::cell::cell() :
@@ -10,6 +11,20 @@ ludo::cell::cell(const size_t &_index, const size_t &_block, const glm::vec3 &_p
     index(_index),
     block(_block),
     position(_position) {}
+
+void ludo::cell::place_coins()
+{
+    constexpr float gap = 0.015f;
+    const float length = gap * (coin_ptrs.size() - 1);
+    const float offset = -length / 2.0f;
+
+    for(size_t i = 0; i < coin_ptrs.size(); ++i)
+    {
+        glm::vec3 new_position = position;
+        new_position.x += offset + gap * i;
+        coin_ptrs[i]->local_transform.position = new_position;
+    }
+}
 
 void ludo::block::constructor_helper(const size_t &_id)
 {

@@ -7,6 +7,7 @@
 #include <iostream>
 
 ludo::coin_object::coin_object() :
+    m_current_cell_ptr(nullptr),
     finished(false),
     gameobject() {}
 
@@ -15,18 +16,34 @@ ludo::dice_button::dice_button() :
 
 void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
 {
+    if(m_current_cell_ptr)
+    {
+        std::vector<ludo::coin_object *> &coin_ptrs = m_current_cell_ptr->coin_ptrs;
+
+        for(size_t i = 0; i < coin_ptrs.size(); ++i)
+        {
+            if(coin_ptrs[i] == this)
+            {
+                coin_ptrs.erase(coin_ptrs.begin() + i);
+
+                break;
+            }
+        }
+
+        m_current_cell_ptr->place_coins();
+    }
+
     m_current_cell_ptr = _current_cell_ptr;
 
     if(m_current_cell_ptr)
     {
-        local_transform.position = m_current_cell_ptr->position;
-
         if(22 <= m_current_cell_ptr->index)
         {
             finished = true;
-
-            
         }
+
+        m_current_cell_ptr->coin_ptrs.push_back(this);
+        m_current_cell_ptr->place_coins();
     }
 }
 
@@ -287,8 +304,8 @@ ludo::match_scene::match_scene() : scene()
         {
             m_finished_coin_count[i][j] = 0;
             m_coins[i][j].set_sprite_ptr(&m_coin_sprites[i]);
-            m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
-            // m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);
+            // m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
+            m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);
 
             m_coins[i][j].local_transform.scale /= 10.0f;
         }
