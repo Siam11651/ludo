@@ -271,10 +271,11 @@ ludo::match_scene::match_scene() : scene()
 
         event_listener_ptrs.insert(&m_dices[i]);
 
+        m_streak_dices_holder[i].local_transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(90.0f * i)));
+
         for(size_t j = 0; j < 3; ++j)
         {
-            new_position = glm::vec3(rotation_mat * glm::vec4(-0.82f + j * 0.15f, -1.215f, 0.00f, 1.0f));
-            m_streak_dices[i][j].local_transform.position = new_position;
+            m_streak_dices[i][j].local_transform.position = glm::vec3(-0.82f + j * 0.15f, -1.215f, 0.00f);
             m_streak_dices[i][j].local_transform.scale /= 7.5f;
 
             m_streak_dices[i][j].set_sprite_ptr(&m_dice_sprites.front());
@@ -292,6 +293,7 @@ ludo::match_scene::match_scene() : scene()
             });
 
             event_listener_ptrs.insert(&m_input_dices[i][j]);
+            m_streak_dices_holder[i].attach_child_ptr(&m_streak_dices[i][j]);
         }
     }
 
@@ -371,10 +373,10 @@ ludo::match_scene::match_scene() : scene()
     {
         m_canvas_element_ptrs.push_back(&m_dices[i]);
         m_canvas_element_ptrs.push_back(&m_spinners[i]);
+        m_canvas_element_ptrs.push_back(&m_streak_dices_holder[i]);
 
         for(size_t j = 0; j < 3; ++j)
         {
-            m_canvas_element_ptrs.push_back(&m_streak_dices[i][j]);
             m_canvas_element_ptrs.push_back(&m_input_dices[i][j]);
         }
     }

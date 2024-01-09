@@ -52,6 +52,7 @@ namespace ludo
         std::array<ludo::sprite, 4> m_coin_sprites;
         std::array<ludo::animation *, 4> m_spinner_animations;
         std::array<ludo::button, 4> m_dices;
+        std::array<ludo::gameobject, 4> m_streak_dices_holder;
         std::array<std::array<ludo::gameobject, 3>, 4> m_streak_dices;
         std::array<std::array<ludo::dice_button, 3>, 4> m_input_dices;
         ludo::gameobject m_board;
