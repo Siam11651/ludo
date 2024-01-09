@@ -26,7 +26,16 @@ ludo::camera::camera(const ludo::transform &_transform) :
     projection(glm::perspective(90.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
 ludo::gameobject::gameobject() :
+    m_sprite_ptr(nullptr),
+    parent(nullptr),
     active(true) {}
+
+void ludo::gameobject::attach_child_ptr(ludo::gameobject *_child_ptr)
+{
+    children_ptrs.insert(_child_ptr);
+
+    _child_ptr->parent = this;
+}
 
 ludo::sprite *ludo::gameobject::get_sprite_ptr() const
 {
@@ -45,17 +54,22 @@ void ludo::gameobject::draw(const glm::mat4 &_global_transform) const
         return;
     }
 
+    const glm::vec3 &position = local_transform.position;
+    const glm::quat &rotation = local_transform.rotation;
+    const glm::vec3 &scale = local_transform.scale;
+    glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
+    local_transform *= glm::toMat4(rotation);
+    local_transform = glm::scale(local_transform, scale);
+    const glm::mat4 new_global_transform = _global_transform * local_transform;
+
     if(m_sprite_ptr)
     {
-        const glm::vec3 &position = local_transform.position;
-        const glm::quat &rotation = local_transform.rotation;
-        const glm::vec3 &scale = local_transform.scale;
-        glm::mat4 local_transform = glm::translate(glm::mat4(1.0f), position);
-        local_transform *= glm::toMat4(rotation);
-        local_transform = glm::scale(local_transform, scale);
-        const glm::mat4 new_global_transform = _global_transform * local_transform;
-
         m_sprite_ptr->draw(new_global_transform);
+    }
+
+    for(ludo::gameobject *child_ptr : children_ptrs)
+    {
+        child_ptr->draw(new_global_transform);
     }
 }
 

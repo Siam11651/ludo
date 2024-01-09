@@ -38,10 +38,12 @@ namespace ludo
 
     public:
         bool active;
+        ludo::gameobject *parent;
+        std::set<ludo::gameobject *> children_ptrs;
         ludo::transform local_transform;
-        std::vector<ludo::gameobject *> children_ptrs;
 
         gameobject();
+        void attach_child_ptr(ludo::gameobject *_child_ptr);    // recommended way to attach children instead of std::set::insert()
         ludo::sprite *get_sprite_ptr() const;
         void set_sprite_ptr(ludo::sprite *_sprite_ptr);
         void draw(const glm::mat4 &_global_transform) const;
