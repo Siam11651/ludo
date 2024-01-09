@@ -304,8 +304,8 @@ ludo::match_scene::match_scene() : scene()
         {
             m_finished_coin_count[i][j] = 0;
             m_coins[i][j].set_sprite_ptr(&m_coin_sprites[i]);
-            // m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
-            m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);
+            m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
+            // m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);
 
             m_coins[i][j].local_transform.scale /= 10.0f;
         }

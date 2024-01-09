@@ -14,14 +14,15 @@ ludo::cell::cell(const size_t &_index, const size_t &_block, const glm::vec3 &_p
 
 void ludo::cell::place_coins()
 {
-    constexpr float gap = 0.015f;
-    const float length = gap * (coin_ptrs.size() - 1);
+    constexpr float x_gap = 0.015f;
+    const float length = x_gap * (coin_ptrs.size() - 1);
     const float offset = -length / 2.0f;
 
     for(size_t i = 0; i < coin_ptrs.size(); ++i)
     {
         glm::vec3 new_position = position;
-        new_position.x += offset + gap * i;
+        new_position.x += offset + x_gap * i;
+        new_position.z += 0.001f * i;
         coin_ptrs[i]->local_transform.position = new_position;
     }
 }
