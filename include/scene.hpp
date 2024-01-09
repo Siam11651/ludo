@@ -4,6 +4,7 @@
 #include <sprite.hpp>
 #include <input.hpp>
 #include <vector>
+#include <set>
 #include <functional>
 #include <glm/ext.hpp>
 
@@ -70,11 +71,12 @@ namespace ludo
         static ludo::input::status s_left_mouse_previous_status;
 
     protected:
-        std::vector<ludo::gameobject *> m_gameobject_ptrs;
-        std::vector<ludo::gameobject *> m_ui_element_ptrs;
+        std::vector<ludo::gameobject *> m_world_element_ptrs;
+        std::vector<ludo::gameobject *> m_canvas_element_ptrs;
 
     public:
         ludo::camera main_camera;
+        std::set<ludo::event_listener *> event_listener_ptrs;
 
         scene();
         void draw() const;

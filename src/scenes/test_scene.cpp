@@ -22,7 +22,7 @@ ludo::test_scene::test_scene()
     main_camera.transform.position.z = 3.5f;
     m_meimei.local_transform.scale.y = 9.0f / 16.0f;
 
-    m_gameobject_ptrs.push_back(&m_meimei);
+    m_world_element_ptrs.push_back(&m_meimei);
 
     meimei_animation->play();
 }

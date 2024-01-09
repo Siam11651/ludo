@@ -121,7 +121,7 @@ void ludo::scene::draw() const
     const glm::mat4x4 view = glm::lookAt(position, position + forward, up);
     const glm::mat4x4 pxv = main_camera.projection * view;
     
-    for(ludo::gameobject *gameobject_ptr : m_gameobject_ptrs)
+    for(ludo::gameobject *gameobject_ptr : m_world_element_ptrs)
     {
         if(gameobject_ptr)
         {
@@ -129,7 +129,7 @@ void ludo::scene::draw() const
         }
     }
 
-    for(ludo::gameobject *ui_element_ptr : m_ui_element_ptrs)
+    for(ludo::gameobject *ui_element_ptr : m_canvas_element_ptrs)
     {
         if(ui_element_ptr)
         {
@@ -152,15 +152,13 @@ void ludo::scene::listen_events()
         mouse_pos_vec4.w = 1.0f;
         mouse_pos_vec4 = glm::inverse(m_ui_projection) * mouse_pos_vec4;
 
-        for(ludo::gameobject *ui_element_ptr : m_ui_element_ptrs)
+        for(ludo::event_listener *event_listener_ptr : event_listener_ptrs)
         {
-            ludo::event_listener *event_listener_ptr = dynamic_cast<ludo::event_listener *>(ui_element_ptr);
-
             if(event_listener_ptr && event_listener_ptr->active)
             {
                 event_listener_ptr->listen(mouse_pos_vec4);
             }
-        }   
+        }
     }
 
     s_left_mouse_previous_status = current_status;
