@@ -31,10 +31,13 @@ namespace ludo
         camera(const ludo::transform &_transform);
     };
 
+    class scene;
+
     class gameobject
     {
     private:
         ludo::sprite *m_sprite_ptr;
+        ludo::scene *m_scene_ptr;
 
     public:
         bool active;
@@ -42,7 +45,8 @@ namespace ludo
         std::set<ludo::gameobject *> children_ptrs;
         ludo::transform local_transform;
 
-        gameobject();
+        gameobject(ludo::scene *_scene);
+        ludo::scene *get_scene() const;
         void attach_child_ptr(ludo::gameobject *_child_ptr);    // recommended way to attach children instead of std::set::insert()
         ludo::sprite *get_sprite_ptr() const;
         void set_sprite_ptr(ludo::sprite *_sprite_ptr);
@@ -55,7 +59,7 @@ namespace ludo
     public:
         std::vector<std::function<void()>> callbacks;
 
-        event_listener();
+        event_listener(ludo::scene *_scene);
         void listen(const glm::vec4 &_mouse_pos);
         void execute_callbacks();
     };
@@ -63,7 +67,7 @@ namespace ludo
     class button : public event_listener
     {
     public:
-        button();
+        button(ludo::scene *_scene);
     };
 
     class scene

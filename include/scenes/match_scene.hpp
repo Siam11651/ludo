@@ -18,7 +18,7 @@ namespace ludo
     public:
         bool finished;
 
-        coin_object();
+        coin_object(ludo::scene *_scene);
         void set_current_cell_ptr(ludo::cell *_current_cell_ptr);
         ludo::cell *get_current_cell_ptr() const;
     };
@@ -29,7 +29,7 @@ namespace ludo
         uint8_t value;
         uint8_t coin;
 
-        dice_button();
+        dice_button(ludo::scene *_scene);
     };
 
     class match_scene : public scene
@@ -51,15 +51,14 @@ namespace ludo
         ludo::sprite m_board_sprite;
         std::array<ludo::sprite, 4> m_coin_sprites;
         std::array<ludo::animation *, 4> m_spinner_animations;
-        std::array<ludo::button, 4> m_dices;
-        std::array<ludo::gameobject, 4> m_streak_dices_holder;
-        std::array<std::array<ludo::gameobject, 3>, 4> m_streak_dices;
-        std::array<std::array<ludo::dice_button, 3>, 4> m_input_dices;
-        ludo::gameobject m_board;
-        std::array<ludo::gameobject, 4> m_spinners;
+        std::array<ludo::button *, 4> m_dices;
+        std::array<ludo::gameobject *, 4> m_streak_dices_holder;
+        std::array<std::array<ludo::gameobject *, 3>, 4> m_streak_dices;
+        std::array<std::array<ludo::dice_button *, 3>, 4> m_input_dices;
+        ludo::gameobject *m_board;
+        std::array<ludo::gameobject *, 4> m_spinners;
         std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;
-        std::array<std::array<ludo::coin_object, 4>, 4> m_coins;
-        ludo::gameobject m_test_coin;
+        std::array<std::array<ludo::coin_object *, 4>, 4> m_coins;
 
         void change_turn();
         void disable_input_dices();

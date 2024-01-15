@@ -25,7 +25,8 @@ ludo::camera::camera(const ludo::transform &_transform) :
     transform(_transform),
     projection(glm::perspective(90.0f, screen::aspect_ratio(), 0.01f, 100.0f)) {}
 
-ludo::gameobject::gameobject() :
+ludo::gameobject::gameobject(ludo::scene *_scene) :
+    m_scene_ptr(_scene),
     m_sprite_ptr(nullptr),
     parent(nullptr),
     active(true) {}
@@ -78,7 +79,8 @@ ludo::gameobject::~gameobject()
 
 }
 
-ludo::event_listener::event_listener() {}
+ludo::event_listener::event_listener(ludo::scene *_scene) :
+    ludo::gameobject(_scene) {}
 
 void ludo::event_listener::listen(const glm::vec4 &_mouse_pos)
 {
@@ -107,7 +109,8 @@ void ludo::event_listener::execute_callbacks()
     }
 }
 
-ludo::button::button() {}
+ludo::button::button(ludo::scene *_scene) :
+    ludo::event_listener(_scene) {}
 
 ludo::scene::scene()
 {
