@@ -40,6 +40,7 @@ namespace ludo
         size_t m_player_count;
         ludo::input::status m_previous_mouse_status;
         std::array<uint8_t, 4> m_dice_values;
+        std::array<size_t, 4> m_move_streaks;
         std::array<std::vector<uint8_t>, 4> m_moves;
         ludo::board m_board_handler;
         const ludo::cell *m_curren_cell_ptr;
@@ -53,8 +54,8 @@ namespace ludo
         std::array<ludo::animation *, 4> m_spinner_animations;
         std::array<ludo::button *, 4> m_dices;
         std::array<ludo::gameobject *, 4> m_streak_dices_holder;
-        std::array<std::array<ludo::gameobject *, 3>, 4> m_streak_dices;
-        std::array<std::array<ludo::dice_button *, 3>, 4> m_input_dices;
+        std::array<std::array<ludo::gameobject *, 10>, 4> m_streak_dices;
+        std::array<std::array<ludo::dice_button *, 10>, 4> m_input_dices;
         ludo::gameobject *m_board;
         std::array<ludo::gameobject *, 4> m_spinners;
         std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;

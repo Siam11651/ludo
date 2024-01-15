@@ -56,6 +56,7 @@ void ludo::match_scene::change_turn()
 {
     m_dices[m_turn]->set_sprite_ptr(&m_dice_sprites[m_dice_values[m_turn] - 1]);
 
+    m_move_streaks[m_turn] = 0;
     m_move = false;
     m_turn += m_player_count;
     m_turn %= 4;
@@ -65,7 +66,7 @@ void ludo::match_scene::change_turn()
 
 void ludo::match_scene::disable_input_dices()
 {
-    for(size_t i = 0; i < 3; ++i)
+    for(size_t i = 0; i < 10; ++i)
     {
         m_input_dices[m_turn][i]->active = false;
     }
@@ -135,7 +136,7 @@ ludo::match_scene::match_scene() : scene()
         m_streak_dices_holder[i] = new ludo::gameobject(this);
         m_spinners[i] = new ludo::gameobject(this);
 
-        for(size_t j = 0; j < 3; ++j)
+        for(size_t j = 0; j < 10; ++j)
         {
             m_streak_dices[i][j] = new ludo::gameobject(this);
             m_input_dices[i][j] = new ludo::dice_button(this);
@@ -201,16 +202,18 @@ ludo::match_scene::match_scene() : scene()
                     m_dice_values[k] = std::random_device()() % 6 + 1;
                     m_streak_dices[k][m_moves[k].size()]->active = true;
 
-                    if(m_moves[k].size() > 0 && m_moves[k].back() == 6)
-                    {
-                        m_moves[k].push_back(m_dice_values[k]);
-                    }
-                    else
+                    if(m_move_streaks[k] == 0)
                     {
                         m_moves[k] = {m_dice_values[k]};
                     }
+                    else
+                    {
+                        m_moves[k].push_back(m_dice_values[k]);
+                    }
 
-                    for(size_t j = 0; j < 3; ++j)
+                    ++m_move_streaks[k];
+
+                    for(size_t j = 0; j < 10; ++j)
                     {
                         if(j < m_moves[k].size())
                         {
@@ -224,7 +227,7 @@ ludo::match_scene::match_scene() : scene()
                         }
                     }
 
-                    if(m_moves[k].size() == 3)
+                    if(m_move_streaks[k] == 3)
                     {
                         if(m_moves[k].back() < 6)
                         {
@@ -292,8 +295,9 @@ ludo::match_scene::match_scene() : scene()
         event_listener_ptrs.insert(m_dices[i]);
 
         m_streak_dices_holder[i]->local_transform.rotation = glm::quat(glm::vec3(0.0f, 0.0f, glm::radians(90.0f * i)));
+        m_move_streaks[i] = 0;
 
-        for(size_t j = 0; j < 3; ++j)
+        for(size_t j = 0; j < 10; ++j)
         {
             m_streak_dices[i][j]->local_transform.position = glm::vec3(-0.82f + j * 0.15f, -1.215f, 0.00f);
             m_streak_dices[i][j]->local_transform.scale /= 7.5f;
@@ -388,7 +392,7 @@ ludo::match_scene::match_scene() : scene()
         m_canvas_element_ptrs.push_back(m_spinners[i]);
         m_canvas_element_ptrs.push_back(m_streak_dices_holder[i]);
 
-        for(size_t j = 0; j < 3; ++j)
+        for(size_t j = 0; j < 10; ++j)
         {
             m_canvas_element_ptrs.push_back(m_input_dices[i][j]);
         }
@@ -555,7 +559,7 @@ ludo::match_scene::~match_scene()
         delete m_streak_dices_holder[i];
         delete m_spinners[i];
 
-        for(size_t j = 0; j < 3; ++j)
+        for(size_t j = 0; j < 10; ++j)
         {
             delete m_streak_dices[i][j];
             delete m_input_dices[i][j];
