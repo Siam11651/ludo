@@ -22,13 +22,12 @@ namespace ludo
         class mouse
         {
         private:
-            glm::vec2 m_position;
             glm::vec2 m_velocity;
 
         public:
+            glm::vec2 position;
+
             mouse();
-            glm::vec2 &position();
-            const glm::vec2 &const_position() const;
         };
 
     private:

@@ -159,7 +159,7 @@ void ludo::scene::listen_events()
     if(s_left_mouse_previous_status == ludo::input::status::press
         && current_status == ludo::input::status::release)
     {
-        const glm::vec2 &mouse_pos = ludo::input::get_mouse().const_position();
+        const glm::vec2 &mouse_pos = ludo::input::get_mouse().position;
         glm::vec4 mouse_pos_vec4(0.0f);
         mouse_pos_vec4.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
         mouse_pos_vec4.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;

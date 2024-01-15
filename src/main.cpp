@@ -75,7 +75,7 @@ int main()
         {
             int32_t mouse_left_status = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
             ludo::input::mouse new_mouse;
-            new_mouse.position() = glm::vec2(mouse_pos_x, mouse_pos_y);
+            new_mouse.position = glm::vec2(mouse_pos_x, mouse_pos_y);
 
             ludo::input::set_key(ludo::input::key::mouse_left, (ludo::input::status)mouse_left_status);
             ludo::input::set_mouse(new_mouse);

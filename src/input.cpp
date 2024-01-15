@@ -5,16 +5,6 @@ std::array<ludo::input::status, 2> ludo::input::s_key_status;
 
 ludo::input::mouse::mouse() {}
 
-glm::vec2 &ludo::input::mouse::position()
-{
-    return m_position;
-}
-
-const glm::vec2 &ludo::input::mouse::const_position() const
-{
-    return m_position;
-}
-
 void ludo::input::input::set_mouse(const ludo::input::mouse &_mouse)
 {
     s_mouse = _mouse;

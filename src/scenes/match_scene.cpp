@@ -408,7 +408,7 @@ void ludo::match_scene::on_update()
 
     if(m_move)
     {
-        glm::vec2 mouse_pos = ludo::input::get_mouse().const_position();
+        glm::vec2 mouse_pos = ludo::input::get_mouse().position;
         mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
         mouse_pos.y = -(mouse_pos.y * 2.0f) / ludo::screen::window_height + 1.0f;
         bool clicked = m_previous_mouse_status == ludo::input::status::press && current_mouse_status == ludo::input::status::release;
