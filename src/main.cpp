@@ -26,6 +26,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     GLFWwindow *window = glfwCreateWindow(ludo::screen::window_width,
         ludo::screen::window_height, ludo::screen::window_title.c_str(),
@@ -53,7 +54,8 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_MULTISAMPLE);
     ludo::sprite::initialise();
 
     ludo::scene_manager::set_current_scene(new ludo::match_scene());
