@@ -63,6 +63,8 @@ void ludo::match_scene::change_turn(const bool _bonus)
 
         m_turn += m_player_count;
         m_turn %= 4;
+
+        m_moves[m_turn].clear();
     }
 
     m_dices[m_turn]->set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
@@ -207,21 +209,13 @@ ludo::match_scene::match_scene() : scene()
             {
                 new_keyframe.on_reach = [this, k]() -> void
                 {
+                    ++m_move_streaks[k];
                     m_dices[k]->active = true;
                     m_spinners[k]->active = false;
                     m_dice_values[k] = std::random_device()() % 6 + 1;
                     m_streak_dices[k][m_moves[k].size()]->active = true;
 
-                    if(m_move_streaks[k] == 0)
-                    {
-                        m_moves[k] = {m_dice_values[k]};
-                    }
-                    else
-                    {
-                        m_moves[k].push_back(m_dice_values[k]);
-                    }
-
-                    ++m_move_streaks[k];
+                    m_moves[k].push_back(m_dice_values[k]);
 
                     for(size_t j = 0; j < 10; ++j)
                     {
