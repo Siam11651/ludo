@@ -52,14 +52,18 @@ ludo::cell *ludo::coin_object::get_current_cell_ptr() const
     return m_current_cell_ptr;
 }
 
-void ludo::match_scene::change_turn()
+void ludo::match_scene::change_turn(const bool _bonus)
 {
-    m_dices[m_turn]->set_sprite_ptr(&m_dice_sprites[m_dice_values[m_turn] - 1]);
-
     m_move_streaks[m_turn] = 0;
     m_move = false;
-    m_turn += m_player_count;
-    m_turn %= 4;
+
+    if(!_bonus)
+    {
+        m_dices[m_turn]->set_sprite_ptr(&m_dice_sprites[m_dice_values[m_turn] - 1]);
+
+        m_turn += m_player_count;
+        m_turn %= 4;
+    }
 
     m_dices[m_turn]->set_sprite_ptr(&m_act_dice_sprites[m_dice_values[m_turn] - 1]);
 }
@@ -88,6 +92,11 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
 
     if(current_cell_ptr->safe)
     {
+        if(22 <= current_cell_ptr->index && current_cell_ptr->index <= 25)
+        {
+            change_turn(true);
+        }
+
         return;
     }
 
@@ -123,6 +132,7 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
         ludo::cell *target_cell = &m_board_handler.blocks[eaten_block].cells[18 + eaten_index];
         
         eaten_coin_ptr->set_current_cell_ptr(target_cell);
+        change_turn(true);
     }
 }
 
@@ -334,8 +344,8 @@ ludo::match_scene::match_scene() : scene()
         {
             m_finished_coin_count[i][j] = 0;
             m_coins[i][j]->set_sprite_ptr(&m_coin_sprites[i]);
-            m_coins[i][j]->set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
-            // m_coins[i][j].set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);
+            // m_coins[i][j]->set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
+            m_coins[i][j]->set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);   // for debugging purpose, put all coins out
 
             m_coins[i][j]->local_transform.scale /= 10.0f;
         }

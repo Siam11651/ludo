@@ -61,7 +61,7 @@ namespace ludo
         std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;
         std::array<std::array<ludo::coin_object *, 4>, 4> m_coins;
 
-        void change_turn();
+        void change_turn(const bool _bonus = false);
         void disable_input_dices();
         void make_move(const uint8_t &_value, const uint8_t &_coin);
 
