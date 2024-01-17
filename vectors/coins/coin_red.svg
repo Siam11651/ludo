@@ -28,8 +28,8 @@
      inkscape:document-units="px"
      showgrid="false"
      inkscape:zoom="0.90266601"
-     inkscape:cx="202.17888"
-     inkscape:cy="298.00613"
+     inkscape:cx="143.46392"
+     inkscape:cy="299.11395"
      inkscape:window-width="1920"
      inkscape:window-height="1002"
      inkscape:window-x="0"
@@ -44,22 +44,30 @@
      inkscape:groupmode="layer"
      id="layer1">
     <circle
-       style="fill:#ffcc00;stroke-width:0.29084;stroke:none;stroke-opacity:1"
+       style="fill:#5c0a0e;fill-opacity:1;stroke:none;stroke-width:0.272662;stroke-opacity:1"
        id="path111"
        cx="84.666664"
-       cy="84.666664"
-       r="84.666664" />
-    <circle
-       style="fill:#e91b25;stroke-width:0.236308;fill-opacity:1"
+       cy="89.958336"
+       r="79.375" />
+    <rect
+       style="fill:#5c0a0e;stroke-width:0.245683;fill-opacity:1"
+       id="rect1"
+       width="158.75"
+       height="10.583333"
+       x="5.2916665"
+       y="79.375" />
+    <ellipse
+       style="fill:#ff000a;fill-opacity:1;stroke:#ffffff;stroke-width:10.0767;stroke-dasharray:none;stroke-opacity:1"
        id="path111-3"
-       cx="84.666664"
-       cy="84.666664"
-       r="68.791664" />
+       cx="84.666649"
+       cy="79.374992"
+       rx="74.336632"
+       ry="74.336639" />
     <circle
        style="fill:#ffffff;stroke-width:0.109065"
        id="path111-3-6"
        cx="84.666664"
-       cy="84.666664"
+       cy="79.375"
        r="31.75" />
   </g>
 </svg>
