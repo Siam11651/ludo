@@ -7,6 +7,8 @@ enable_testing()
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
 
+add_compile_definitions("GLM_ENABLE_EXPERIMENTAL") # might remove later
+
 add_executable(ludo
     "src/glad/glad.c"
     "src/animation.cpp"
