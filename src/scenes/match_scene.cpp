@@ -4,7 +4,6 @@
 #include <animation.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <input.hpp>
-#include <iostream>
 
 ludo::coin_object::coin_object(ludo::scene *_scene) :
     m_current_cell_ptr(nullptr),
@@ -419,8 +418,6 @@ void ludo::match_scene::on_update()
 
         if(finished_count == 4)
         {
-            std::cout << "Player " << i + 1 << " won" << std::endl;
-
             ludo::scene_manager::set_current_scene(nullptr);
         }
     }

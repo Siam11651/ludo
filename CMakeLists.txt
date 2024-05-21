@@ -22,6 +22,8 @@ add_executable(ludo
     "src/time.cpp"
 )
 
+set_property(TARGET ludo PROPERTY CXX_STANDARD 20)
+
 target_include_directories(ludo PRIVATE
     "include"
 )
