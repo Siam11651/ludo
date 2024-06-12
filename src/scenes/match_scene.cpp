@@ -5,10 +5,11 @@
 #include <glm/gtx/quaternion.hpp>
 #include <input.hpp>
 
-constexpr size_t DUMMY_MOVES_COUNT = 3;
+// for debug purpose
+// constexpr size_t DUMMY_MOVES_COUNT = 3;
 
-std::array<int8_t, DUMMY_MOVES_COUNT> dummy_moves = {6, 3, 5};
-size_t dummy_moves_idx = 0;
+// std::array<int8_t, DUMMY_MOVES_COUNT> dummy_moves = {6, 3, 5};
+// size_t dummy_moves_idx = 0;
 
 ludo::coin_object::coin_object(ludo::scene *_scene) :
     m_current_cell_ptr(nullptr),
@@ -82,7 +83,7 @@ void ludo::match_scene::disable_input_dices()
     }
 }
 
-void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
+void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, const bool &_start)
 {
     m_coin_animations[m_turn][_coin]->keyframes.clear();
 
@@ -110,10 +111,18 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
         current_ptr = next_ptr;
     }
 
-    m_coin_animations[m_turn][_coin]->keyframes.back().on_reach = [this, current_ptr, _value, _coin]()
+    m_coin_animations[m_turn][_coin]->keyframes.back().on_reach = [this, current_ptr, _value, _coin, _start]()
     {
         m_coins[m_turn][_coin]->set_current_cell_ptr(current_ptr);
-        m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), _value));
+
+        if(_start)
+        {
+            m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6));
+        }
+        else
+        {
+            m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), _value));
+        }
 
         ludo::cell *current_cell_ptr = current_ptr;
 
@@ -157,9 +166,31 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
         if(eaten_coin_ptr)
         {
             ludo::cell *target_cell = &m_board_handler.blocks[eaten_block].cells[18 + eaten_index];
-            
-            eaten_coin_ptr->set_current_cell_ptr(target_cell);
-            change_turn(true);
+            ludo::animation *eating_animation = new ludo::animation(eaten_coin_ptr);
+
+            {
+                ludo::keyframe new_keyframe(std::chrono::nanoseconds(0));
+                new_keyframe.transform_opt = m_coins[m_turn][_coin]->local_transform;
+                new_keyframe.transform_opt.value().position = eaten_coin_ptr->local_transform.position;
+
+                eating_animation->keyframes.push_back(new_keyframe);
+            }
+
+            {
+                ludo::keyframe new_keyframe(m_coin_move_duration);
+                new_keyframe.transform_opt = m_coins[m_turn][_coin]->local_transform;
+                new_keyframe.transform_opt.value().position = target_cell->position;
+
+                eating_animation->keyframes.push_back(new_keyframe);
+            }
+
+            eating_animation->keyframes.back().on_reach = [this, eaten_coin_ptr, target_cell]()
+            {
+                eaten_coin_ptr->set_current_cell_ptr(target_cell);
+                change_turn(true);
+            };
+
+            eating_animation->play();
         }
     };
 
@@ -168,7 +199,7 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
 
 ludo::match_scene::match_scene() :
     scene(),
-    m_coin_move_duration(500000000)
+    m_coin_move_duration(250000000)
 {
     m_board = new ludo::gameobject(this);
 
@@ -242,8 +273,8 @@ ludo::match_scene::match_scene() :
                     ++m_move_streaks[k];
                     m_dices[k]->active = true;
                     m_spinners[k]->active = false;
-                    // m_dice_values[k] = std::random_device()() % 6 + 1;
-                    m_dice_values[k] = dummy_moves[(dummy_moves_idx++) % DUMMY_MOVES_COUNT];
+                    m_dice_values[k] = std::random_device()() % 6 + 1;
+                    // m_dice_values[k] = dummy_moves[(dummy_moves_idx++) % DUMMY_MOVES_COUNT]; // for debug purpose
                     m_streak_dices[k][m_moves[k].size()]->active = true;
 
                     m_moves[k].push_back(m_dice_values[k]);
@@ -534,11 +565,7 @@ void ludo::match_scene::on_update()
 
                         if(in_home[i])
                         {
-                            ludo::cell *current = m_coins[m_turn][i]->get_current_cell_ptr();
-                            size_t idx = current->index;
-                            size_t block = current->block;
-                            m_coins[m_turn][i]->set_current_cell_ptr(m_board_handler.get_next_cell_ptr(idx, block, m_turn, i));
-                            m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), 6));
+                            make_move(1, i, true);
                         }
                         else
                         {

@@ -94,8 +94,9 @@ namespace ludo
          * 
          * @param _value number of cells to cross
          * @param _coin index of the coin to move
+         * @param _remove value to remove from streak (defaults to that of _value)
          */
-        void make_move(const uint8_t &_value, const uint8_t &_coin);
+        void make_move(const uint8_t &_value, const uint8_t &_coin, const bool &_start = false);
 
     public:
         match_scene();

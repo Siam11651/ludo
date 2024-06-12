@@ -14,7 +14,7 @@ ludo::cell::cell(const size_t &_index, const size_t &_block, const glm::vec3 &_p
 
 void ludo::cell::place_coins()
 {
-    constexpr float x_gap = 0.015f;
+    constexpr float x_gap = 0.02f;
     const float length = x_gap * (coin_ptrs.size() - 1);
     const float offset = -length / 2.0f;
 
