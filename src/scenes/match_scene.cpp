@@ -5,6 +5,11 @@
 #include <glm/gtx/quaternion.hpp>
 #include <input.hpp>
 
+constexpr size_t DUMMY_MOVES_COUNT = 3;
+
+std::array<int8_t, DUMMY_MOVES_COUNT> dummy_moves = {6, 3, 5};
+size_t dummy_moves_idx = 0;
+
 ludo::coin_object::coin_object(ludo::scene *_scene) :
     m_current_cell_ptr(nullptr),
     finished(false),
@@ -79,65 +84,91 @@ void ludo::match_scene::disable_input_dices()
 
 void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin)
 {
+    m_coin_animations[m_turn][_coin]->keyframes.clear();
+
+    ludo::cell *current_ptr = m_coins[m_turn][_coin]->get_current_cell_ptr();
+
+    {
+        ludo::keyframe new_keyframe(std::chrono::nanoseconds(0));
+        new_keyframe.transform_opt = m_coins[m_turn][_coin]->local_transform;
+        new_keyframe.transform_opt.value().position = current_ptr->position;
+
+        m_coin_animations[m_turn][_coin]->keyframes.push_back(new_keyframe);
+    }
+
     for(uint8_t i = 0; i < _value; ++i)
     {
-        ludo::cell *current = m_coins[m_turn][_coin]->get_current_cell_ptr();
-        size_t idx = current->index;
-        size_t block = current->block;
-        m_coins[m_turn][_coin]->set_current_cell_ptr(this->m_board_handler.get_next_cell_ptr(idx, block, m_turn, _coin));
+        size_t idx = current_ptr->index;
+        size_t block = current_ptr->block;
+        ludo::cell *next_ptr = this->m_board_handler.get_next_cell_ptr(idx, block, m_turn, _coin);
+        ludo::keyframe new_keyframe(m_coin_move_duration);
+        new_keyframe.transform_opt = m_coins[m_turn][_coin]->local_transform;
+        new_keyframe.transform_opt.value().position = next_ptr->position;
+
+        m_coin_animations[m_turn][_coin]->keyframes.push_back(new_keyframe);
+        
+        current_ptr = next_ptr;
     }
 
-    m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), _value));
-
-    ludo::cell *current_cell_ptr = m_coins[m_turn][_coin]->get_current_cell_ptr();
-
-    if(current_cell_ptr->safe)
+    m_coin_animations[m_turn][_coin]->keyframes.back().on_reach = [this, current_ptr, _value, _coin]()
     {
-        if(22 <= current_cell_ptr->index && current_cell_ptr->index <= 25)
+        m_coins[m_turn][_coin]->set_current_cell_ptr(current_ptr);
+        m_moves[m_turn].erase(std::find(m_moves[m_turn].begin(), m_moves[m_turn].end(), _value));
+
+        ludo::cell *current_cell_ptr = current_ptr;
+
+        if(current_cell_ptr->safe)
         {
-            change_turn(true);
-        }
-
-        return;
-    }
-
-    ludo::coin_object *eaten_coin_ptr = nullptr;
-    size_t eaten_block = 0;
-    size_t eaten_index = 0;
-
-    for(size_t i = 0; i < 4; ++i)
-    {
-        if(i == m_turn)
-        {
-            continue;
-        }
-
-        for(size_t j = 0; j < 4; ++j)
-        {
-            if(m_coins[i][j]->get_current_cell_ptr() == current_cell_ptr)
+            if(22 <= current_cell_ptr->index && current_cell_ptr->index <= 25)
             {
-                if(eaten_coin_ptr)
-                {
-                    return;
-                }
+                change_turn(true);
+            }
 
-                eaten_coin_ptr = m_coins[i][j];
-                eaten_block = i;
-                eaten_index = j;
+            return;
+        }
+
+        ludo::coin_object *eaten_coin_ptr = nullptr;
+        size_t eaten_block = 0;
+        size_t eaten_index = 0;
+
+        for(size_t i = 0; i < 4; ++i)
+        {
+            if(i == m_turn)
+            {
+                continue;
+            }
+
+            for(size_t j = 0; j < 4; ++j)
+            {
+                if(m_coins[i][j]->get_current_cell_ptr() == current_cell_ptr)
+                {
+                    if(eaten_coin_ptr)
+                    {
+                        return;
+                    }
+
+                    eaten_coin_ptr = m_coins[i][j];
+                    eaten_block = i;
+                    eaten_index = j;
+                }
             }
         }
-    }
 
-    if(eaten_coin_ptr)
-    {
-        ludo::cell *target_cell = &m_board_handler.blocks[eaten_block].cells[18 + eaten_index];
-        
-        eaten_coin_ptr->set_current_cell_ptr(target_cell);
-        change_turn(true);
-    }
+        if(eaten_coin_ptr)
+        {
+            ludo::cell *target_cell = &m_board_handler.blocks[eaten_block].cells[18 + eaten_index];
+            
+            eaten_coin_ptr->set_current_cell_ptr(target_cell);
+            change_turn(true);
+        }
+    };
+
+    m_coin_animations[m_turn][_coin]->play();
 }
 
-ludo::match_scene::match_scene() : scene()
+ludo::match_scene::match_scene() :
+    scene(),
+    m_coin_move_duration(500000000)
 {
     m_board = new ludo::gameobject(this);
 
@@ -211,7 +242,8 @@ ludo::match_scene::match_scene() : scene()
                     ++m_move_streaks[k];
                     m_dices[k]->active = true;
                     m_spinners[k]->active = false;
-                    m_dice_values[k] = std::random_device()() % 6 + 1;
+                    // m_dice_values[k] = std::random_device()() % 6 + 1;
+                    m_dice_values[k] = dummy_moves[(dummy_moves_idx++) % DUMMY_MOVES_COUNT];
                     m_streak_dices[k][m_moves[k].size()]->active = true;
 
                     m_moves[k].push_back(m_dice_values[k]);
@@ -315,8 +347,8 @@ ludo::match_scene::match_scene() : scene()
             m_input_dices[i][j]->active = false;
             m_input_dices[i][j]->callbacks.push_back([this, i, j]() -> void
             {
-                make_move(m_input_dices[i][j]->value, m_input_dices[i][j]->coin);
                 disable_input_dices();
+                make_move(m_input_dices[i][j]->value, m_input_dices[i][j]->coin);
             });
 
             event_listener_ptrs.insert(m_input_dices[i][j]);
@@ -338,9 +370,9 @@ ludo::match_scene::match_scene() : scene()
             m_finished_coin_count[i][j] = 0;
             m_coins[i][j]->set_sprite_ptr(&m_coin_sprites[i]);
             m_coins[i][j]->set_current_cell_ptr(&m_board_handler.blocks[i].cells[18 + j]);
-            // m_coins[i][j]->set_current_cell_ptr(&m_board_handler.blocks[i].cells[7]);   // for debugging purpose, put all coins out
 
             m_coins[i][j]->local_transform.scale /= 10.0f;
+            m_coin_animations[i][j] = new ludo::animation(m_coins[i][j]);
         }
     }
 
@@ -568,6 +600,7 @@ ludo::match_scene::~match_scene()
 
         for(size_t j = 0; j < 4; ++j)
         {
+            delete m_coin_animations[i][j];
             delete m_coins[i][j];
         }
     }

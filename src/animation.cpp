@@ -54,10 +54,10 @@ void ludo::animation::play()
         return;
     }
 
-    m_current_keyframe_idx = 0;
+    m_current_keyframe_idx = 1;
     m_start_point = ludo::clk::now();
 
-    keyframes[m_current_keyframe_idx].on_reach();
+    keyframes.front().on_reach();
 
     m_playing = true;
     ludo::animation::s_current_animation_ptrs.insert(this);
@@ -89,25 +89,23 @@ void ludo::animation::animate()
 
         if(animation_ptr->m_current_keyframe_idx >= animation_ptr->keyframes.size())
         {
+            keyframes.back().on_reach();
             stop_queue.push(animation_ptr);
 
             continue;
         }
 
         const ludo::clk::time_point now = ludo::clk::now();
-        const size_t current_idx = animation_ptr->m_current_keyframe_idx;
-        const size_t next_idx = animation_ptr->m_current_keyframe_idx + 1;
-        const ludo::clk::duration delay = keyframes[current_idx].delay;
+        size_t &current_idx = animation_ptr->m_current_keyframe_idx;
+        const size_t prev_idx = animation_ptr->m_current_keyframe_idx - 1;
+        const ludo::clk::duration &delay = keyframes[current_idx].delay;
 
         if(now >= animation_ptr->m_start_point + delay)
         {
-            animation_ptr->m_current_keyframe_idx = next_idx;
+            ++current_idx;
             animation_ptr->m_start_point = now;
 
-            if(next_idx < keyframes.size())
-            {
-                keyframes[next_idx].on_reach();
-            }
+            keyframes[prev_idx].on_reach();
 
             continue;
         }
@@ -121,11 +119,11 @@ void ludo::animation::animate()
 
         if(keyframes[current_idx].transform_opt.has_value())
         {
-            if(keyframes[next_idx].transform_opt.has_value())
+            if(keyframes[prev_idx].transform_opt.has_value())
             {
-                const ludo::transform &start = animation_ptr->keyframes[current_idx]
+                const ludo::transform &start = animation_ptr->keyframes[prev_idx]
                     .transform_opt.value();
-                const ludo::transform &end = animation_ptr->keyframes[next_idx]
+                const ludo::transform &end = animation_ptr->keyframes[current_idx]
                     .transform_opt.value();
                 const glm::vec3 m = (end.position - start.position) / (float)delay.count();
                 const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;

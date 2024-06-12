@@ -35,6 +35,7 @@ namespace ludo
     class match_scene : public scene
     {
     private:
+        const std::chrono::nanoseconds m_coin_move_duration;
         /**
          * @brief state variable which indicates if right now we are to select select a coin to finish a move or not
          * 
@@ -84,6 +85,7 @@ namespace ludo
         std::array<ludo::gameobject *, 4> m_spinners;
         std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;
         std::array<std::array<ludo::coin_object *, 4>, 4> m_coins;
+        std::array<std::array<ludo::animation *, 4>, 4> m_coin_animations;
 
         void change_turn(const bool _bonus = false);
         void disable_input_dices();

@@ -21,6 +21,10 @@ namespace ludo
         ludo::sprite *m_sprite_ptr;
 
     public:
+        /**
+         * @brief keyframe duration in nanoseconds
+         * 
+         */
         ludo::clk::duration delay;
         std::function<void()> on_reach;
         std::optional<ludo::transform> transform_opt;
