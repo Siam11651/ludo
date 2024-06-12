@@ -35,12 +35,36 @@ namespace ludo
     class match_scene : public scene
     {
     private:
+        /**
+         * @brief state variable which indicates if right now we are to select select a coin to finish a move or not
+         * 
+         */
         bool m_move;
+        /**
+         * @brief index to player to make the current dice roll
+         * 
+         */
         uint8_t m_turn;
+        /**
+         * @brief number of players in the current match
+         * 
+         */
         size_t m_player_count;
         ludo::input::status m_previous_mouse_status;
+        /**
+         * @brief dice values of all the 4 players
+         * 
+         */
         std::array<uint8_t, 4> m_dice_values;
+        /**
+         * @brief move streak count of player with control of dice
+         * 
+         */
         std::array<size_t, 4> m_move_streaks;
+        /**
+         * @brief moves in the streak of player with control of dice
+         * 
+         */
         std::array<std::vector<uint8_t>, 4> m_moves;
         ludo::board m_board_handler;
         const ludo::cell *m_curren_cell_ptr;
@@ -63,6 +87,12 @@ namespace ludo
 
         void change_turn(const bool _bonus = false);
         void disable_input_dices();
+        /**
+         * @brief method to make the final move and keep the coin in place
+         * 
+         * @param _value number of cells to cross
+         * @param _coin index of the coin to move
+         */
         void make_move(const uint8_t &_value, const uint8_t &_coin);
 
     public:
