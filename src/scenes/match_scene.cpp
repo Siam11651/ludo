@@ -511,7 +511,7 @@ void ludo::match_scene::on_update()
         {
             const size_t &cell_index = m_coins[m_turn][i]->get_current_cell_ptr()->index;
 
-            if(18 <= cell_index && cell_index <= 25)
+            if(18 <= cell_index && cell_index <= 21)
             {
                 in_home[i] = true;
             }
@@ -531,7 +531,7 @@ void ludo::match_scene::on_update()
             {
                 for(const uint8_t &move : m_moves[m_turn])
                 {
-                    if(!(0 <= cell_index && cell_index <= 5) || move <= cell_index + 1)
+                    if(!(22 <= cell_index && cell_index <= 25) && (!(0 <= cell_index && cell_index <= 5) || move <= cell_index + 1))
                     {
                         legal_moves[i].push_back(move);
                     }
