@@ -3,6 +3,7 @@
 
 #include <random>
 #include <array>
+#include <queue>
 #include <input.hpp>
 #include <scene.hpp>
 #include <animation.hpp>
@@ -91,6 +92,7 @@ namespace ludo
         std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;
         std::array<std::array<ludo::coin_object *, 4>, 4> m_coins;
         std::array<std::array<ludo::animation *, 4>, 4> m_coin_animations;
+        std::queue<ludo::animation *> m_animations_cleaner;
 
         void change_turn(const bool _bonus = false);
         void disable_input_dices();

@@ -168,14 +168,14 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, c
         if(eaten_coin_ptr)
         {
             ludo::cell *target_cell = &m_board_handler.blocks[eaten_block].cells[18 + eaten_index];
-            ludo::animation *eating_animation = new ludo::animation(eaten_coin_ptr);
+            ludo::animation *eating_animation_ptr = new ludo::animation(eaten_coin_ptr);
 
             {
                 ludo::keyframe new_keyframe(std::chrono::nanoseconds(0));
                 new_keyframe.transform_opt = m_coins[m_turn][_coin]->local_transform;
                 new_keyframe.transform_opt.value().position = eaten_coin_ptr->local_transform.position;
 
-                eating_animation->keyframes.push_back(new_keyframe);
+                eating_animation_ptr->keyframes.push_back(new_keyframe);
             }
 
             {
@@ -183,18 +183,20 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, c
                 new_keyframe.transform_opt = m_coins[m_turn][_coin]->local_transform;
                 new_keyframe.transform_opt.value().position = target_cell->position;
 
-                eating_animation->keyframes.push_back(new_keyframe);
+                eating_animation_ptr->keyframes.push_back(new_keyframe);
             }
 
-            eating_animation->keyframes.back().on_reach = [this, eaten_coin_ptr, target_cell]()
+            eating_animation_ptr->keyframes.back().on_reach = [this, eating_animation_ptr, eaten_coin_ptr, target_cell]()
             {
                 eaten_coin_ptr->set_current_cell_ptr(target_cell);
                 change_turn(true);
 
                 m_coin_animating = false;
+
+                m_animations_cleaner.push(eating_animation_ptr);
             };
 
-            eating_animation->play();
+            eating_animation_ptr->play();
         }
         else
         {
@@ -612,7 +614,14 @@ void ludo::match_scene::on_update()
 
 void ludo::match_scene::on_late_update()
 {
+    while(!m_animations_cleaner.empty())
+    {
+        ludo::animation *front = m_animations_cleaner.front();
 
+        m_animations_cleaner.pop();
+
+        delete front;
+    }
 }
 
 ludo::match_scene::~match_scene()
