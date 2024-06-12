@@ -42,6 +42,11 @@ namespace ludo
          */
         bool m_move;
         /**
+         * @brief state variable denoting if coin animating or not
+         * 
+         */
+        bool m_coin_animating;
+        /**
          * @brief index to player to make the current dice roll
          * 
          */

@@ -133,6 +133,8 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, c
                 change_turn(true);
             }
 
+            m_coin_animating = false;
+
             return;
         }
 
@@ -188,11 +190,19 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, c
             {
                 eaten_coin_ptr->set_current_cell_ptr(target_cell);
                 change_turn(true);
+
+                m_coin_animating = false;
             };
 
             eating_animation->play();
         }
+        else
+        {
+            m_coin_animating = false;
+        }
     };
+
+    m_coin_animating = true;
 
     m_coin_animations[m_turn][_coin]->play();
 }
@@ -222,6 +232,7 @@ ludo::match_scene::match_scene() :
     }
 
     m_move = false;
+    m_coin_animating = false;
     m_player_count = 2;
     m_turn = 0;
 
@@ -487,7 +498,7 @@ void ludo::match_scene::on_update()
 
     const ludo::input::status &current_mouse_status = ludo::input::get_key(ludo::input::key::mouse_left);
 
-    if(m_move)
+    if(m_move && !m_coin_animating)
     {
         glm::vec2 mouse_pos = ludo::input::get_mouse().position;
         mouse_pos.x = (mouse_pos.x * 2.0f) / ludo::screen::window_width - 1.0f;
