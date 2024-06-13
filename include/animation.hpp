@@ -27,6 +27,7 @@ namespace ludo
          */
         ludo::clk::duration delay;
         std::function<void()> on_reach;
+        std::optional<float> transparency_opt;
         std::optional<ludo::transform> transform_opt;
 
         keyframe();

@@ -11,13 +11,9 @@
 // std::array<int8_t, DUMMY_MOVES_COUNT> dummy_moves = {6, 3, 5};
 // size_t dummy_moves_idx = 0;
 
-ludo::coin_object::coin_object(ludo::scene *_scene) :
-    m_current_cell_ptr(nullptr),
-    finished(false),
-    gameobject(_scene) {}
+ludo::coin_object::coin_object(ludo::scene *_scene) : m_current_cell_ptr(nullptr), finished(false), gameobject(_scene) {}
 
-ludo::dice_button::dice_button(ludo::scene *_scene) :
-    button(_scene) {};
+ludo::dice_button::dice_button(ludo::scene *_scene) : button(_scene) {}
 
 void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
 {
@@ -55,6 +51,63 @@ void ludo::coin_object::set_current_cell_ptr(ludo::cell *_current_cell_ptr)
 ludo::cell *ludo::coin_object::get_current_cell_ptr() const
 {
     return m_current_cell_ptr;
+}
+
+ludo::stars_object::stars_object(ludo::scene *_scene) : gameobject(_scene)
+{
+    for(size_t i = 0; i < 2; ++i)
+    {
+        m_stars[i] = new gameobject(_scene);
+        m_star_animation_ptrs[i] = new ludo::animation(m_stars[i]);
+        m_stars[i]->sprite_ptr = new ludo::sprite("assets/star.png");
+        m_stars[i]->local_transform.position.x = 0.02f * (1 - 2 * (i == 0));
+        m_stars[i]->local_transform.position.y = 0.02f * (1 - 2 * (i == 0));
+        m_stars[i]->local_transform.position.z = 0.02f + i * 0.01f;
+        m_stars[i]->local_transform.scale /= 10.0f;
+        m_stars[i]->sprite_ptr->transparency = 0.0f;
+
+        {
+            ludo::keyframe new_keyframe(std::chrono::seconds(0));
+
+            new_keyframe.transform_opt = m_stars[i]->local_transform;
+            new_keyframe.transparency_opt = 1.0f;
+
+            m_star_animation_ptrs[i]->keyframes.push_back(new_keyframe);
+        }
+
+        {
+            ludo::keyframe new_keyframe(std::chrono::milliseconds(1000));
+
+            new_keyframe.transform_opt = m_stars[i]->local_transform;
+            new_keyframe.transform_opt.value().position.x *= 3.0f;
+            new_keyframe.transform_opt.value().position.y *= 3.0f;
+            new_keyframe.transform_opt.value().rotation = glm::quat(glm::vec3(0.0f, 0.0f, std::acos(-1.0f) / 2.0f));
+            new_keyframe.transform_opt.value().scale *= 0.2f;
+            new_keyframe.transparency_opt = 0.0f;
+
+            m_star_animation_ptrs[i]->keyframes.push_back(new_keyframe);
+        }
+
+        children_ptrs.insert(m_stars[i]);
+    }
+}
+
+void ludo::stars_object::play() const
+{
+    for(size_t i = 0; i < 2; ++i)
+    {
+        m_star_animation_ptrs[i]->play();
+    }
+}
+
+ludo::stars_object::~stars_object()
+{
+    for(size_t i = 0; i < 2; ++i)
+    {
+        delete m_stars[i]->sprite_ptr;
+        delete m_stars[i];
+        delete m_star_animation_ptrs[i];
+    }
 }
 
 void ludo::match_scene::change_turn(const bool _bonus)
@@ -130,6 +183,9 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, c
         {
             if(22 <= current_cell_ptr->index && current_cell_ptr->index <= 25)
             {
+                m_stars->local_transform.position = current_cell_ptr->position;
+
+                m_stars->play();
                 change_turn(true);
             }
 
@@ -196,7 +252,10 @@ void ludo::match_scene::make_move(const uint8_t &_value, const uint8_t &_coin, c
                 m_animations_cleaner.push(eating_animation_ptr);
             };
 
+            m_stars->local_transform.position = eaten_coin_ptr->local_transform.position;
+            
             eating_animation_ptr->play();
+            m_stars->play();
         }
         else
         {
@@ -419,6 +478,7 @@ ludo::match_scene::match_scene() : scene(), m_coin_move_duration(250000000)
         }
     }
 
+    m_stars = new ludo::stars_object(this);
     m_board->local_transform.scale = glm::vec3(2.0f, 2.0f, 1.0f);
     main_camera.transform.position.z = 3.5f;
 
@@ -431,6 +491,8 @@ ludo::match_scene::match_scene() : scene(), m_coin_move_duration(250000000)
             m_world_element_ptrs.push_back(m_coins[i][j]);
         }
     }
+
+    m_world_element_ptrs.push_back(m_stars);
 
     m_dices[0]->callbacks.push_back([this]() -> void
     {
@@ -631,6 +693,7 @@ ludo::match_scene::~match_scene()
     }
 
     delete m_board;
+    delete m_stars;
 
     for(size_t i = 0; i < 4; ++i)
     {

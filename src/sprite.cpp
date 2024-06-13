@@ -35,12 +35,6 @@ uniform float transparency;
 void main()
 {
     vec4 tex_color = texture(tex_sampler, tex_coord);
-    
-    if(tex_color.a == 0)
-    {
-        discard;
-    }
-
     tex_color.a *= transparency;
     frag_color = tex_color;
 }

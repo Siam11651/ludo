@@ -5,15 +5,9 @@
 
 std::set<ludo::animation *> ludo::animation::s_current_animation_ptrs;
 
-ludo::keyframe::keyframe() :
-    delay(0),
-    on_reach([]() -> void {}),
-    m_sprite_ptr(nullptr) {}
+ludo::keyframe::keyframe() : delay(0), on_reach([]() -> void {}), m_sprite_ptr(nullptr) {}
 
-ludo::keyframe::keyframe(const ludo::clk::duration &_delay) :
-    delay(_delay),
-    on_reach([]() -> void {}),
-    m_sprite_ptr(nullptr) {}
+ludo::keyframe::keyframe(const ludo::clk::duration &_delay) : delay(_delay), on_reach([]() -> void {}), m_sprite_ptr(nullptr) {}
 
 void ludo::keyframe::set_sprite_ptr(ludo::sprite *_sprite_ptr)
 {
@@ -117,18 +111,31 @@ void ludo::animation::animate()
             animation_ptr->m_gameobject_ptr->sprite_ptr = new_sprite;
         }
 
+        const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;
+
+        if(keyframes[current_idx].transparency_opt.has_value())
+        {
+            if(animation_ptr->m_gameobject_ptr->sprite_ptr)
+            {
+                const float &start = keyframes[prev_idx].transparency_opt.value();
+                const float &end = keyframes[current_idx].transparency_opt.value();
+                const float rate = (end - start) / (float)delay.count();
+                animation_ptr->m_gameobject_ptr->sprite_ptr->transparency = start + rate * ((float)elapsed.count());
+            }
+        }
+
         if(keyframes[current_idx].transform_opt.has_value())
         {
             if(keyframes[prev_idx].transform_opt.has_value())
             {
-                const ludo::transform &start = animation_ptr->keyframes[prev_idx]
-                    .transform_opt.value();
-                const ludo::transform &end = animation_ptr->keyframes[current_idx]
-                    .transform_opt.value();
-                const glm::vec3 m = (end.position - start.position) / (float)delay.count();
-                const ludo::clk::duration elapsed = now - animation_ptr->m_start_point;
-                animation_ptr->m_gameobject_ptr->local_transform.position = start.position
-                    + m * ((float)elapsed.count());
+                const ludo::transform &start = keyframes[prev_idx].transform_opt.value();
+                const ludo::transform &end = keyframes[current_idx].transform_opt.value();
+                const glm::vec3 p = (end.position - start.position) / (float)delay.count();
+                const glm::quat r = (end.rotation - start.rotation) / (float)delay.count();
+                const glm::vec3 s = (end.scale - start.scale) / (float)delay.count();
+                animation_ptr->m_gameobject_ptr->local_transform.position = start.position + p * ((float)elapsed.count());
+                animation_ptr->m_gameobject_ptr->local_transform.rotation = glm::normalize(start.rotation + r * ((float)elapsed.count()));
+                animation_ptr->m_gameobject_ptr->local_transform.scale = start.scale + s * ((float)elapsed.count());
             }
             else
             {

@@ -33,6 +33,18 @@ namespace ludo
         dice_button(ludo::scene *_scene);
     };
 
+    class stars_object : public gameobject
+    {
+    private:
+        std::array<ludo::animation *, 2> m_star_animation_ptrs;
+        std::array<ludo::gameobject *, 2> m_stars;
+
+    public:
+        stars_object(ludo::scene *_scene);
+        void play() const;
+        ~stars_object();
+    };
+
     class match_scene : public scene
     {
     private:
@@ -88,6 +100,7 @@ namespace ludo
         std::array<std::array<ludo::gameobject *, 10>, 4> m_streak_dices;
         std::array<std::array<ludo::dice_button *, 10>, 4> m_input_dices;
         ludo::gameobject *m_board;
+        ludo::stars_object *m_stars;
         std::array<ludo::gameobject *, 4> m_spinners;
         std::array<std::array<uint8_t, 4>, 4> m_finished_coin_count;
         std::array<std::array<ludo::coin_object *, 4>, 4> m_coins;
