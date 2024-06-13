@@ -30,6 +30,7 @@ R"(
 in vec2 tex_coord;
 out vec4 frag_color;
 uniform sampler2D tex_sampler;
+uniform float transparency;
 
 void main()
 {
@@ -40,6 +41,7 @@ void main()
         discard;
     }
 
+    tex_color.a *= transparency;
     frag_color = tex_color;
 }
 )";
@@ -48,10 +50,11 @@ GLuint ludo::sprite::s_vertex_array_object;
 GLuint ludo::sprite::s_element_buffer_object;
 GLuint ludo::sprite::s_shader_program;
 GLuint ludo::sprite::s_transform_uniform_location;
+GLuint ludo::sprite::s_transparency_uniform_location;
 
-ludo::sprite::sprite() {}
+ludo::sprite::sprite() : transparency(1.0f) {}
 
-ludo::sprite::sprite(const std::string &_filepath)
+ludo::sprite::sprite(const std::string &_filepath) : transparency(1.0f)
 {
     setup_sprite(_filepath);
 }
@@ -81,6 +84,7 @@ void ludo::sprite::setup_sprite(const std::string &_filepath)
 void ludo::sprite::draw(const glm::mat4x4 &_global_transform) const
 {
     glUniformMatrix4fv(s_transform_uniform_location, 1, GL_FALSE, glm::value_ptr(_global_transform));
+    glUniform1f(s_transparency_uniform_location, transparency);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
@@ -148,6 +152,7 @@ void ludo::sprite::initialise()
     glUseProgram(s_shader_program);
 
     s_transform_uniform_location = glGetUniformLocation(s_shader_program, "transform");
+    s_transparency_uniform_location = glGetUniformLocation(s_shader_program, "transparency");
 
     const GLfloat vertices[] =
     {

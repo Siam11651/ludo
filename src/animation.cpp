@@ -46,7 +46,7 @@ void ludo::animation::play()
 
     if(new_sprite)
     {
-        m_gameobject_ptr->set_sprite_ptr(new_sprite);
+        m_gameobject_ptr->sprite_ptr = new_sprite;
     }
 
     if(keyframes.size() == 1)
@@ -114,7 +114,7 @@ void ludo::animation::animate()
 
         if(new_sprite)
         {
-            animation_ptr->m_gameobject_ptr->set_sprite_ptr(new_sprite);
+            animation_ptr->m_gameobject_ptr->sprite_ptr = new_sprite;
         }
 
         if(keyframes[current_idx].transform_opt.has_value())

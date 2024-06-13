@@ -7,6 +7,7 @@
 #include <sprite.hpp>
 #include <animation.hpp>
 #include <scenes/match_scene.hpp>
+#include <scenes/test_scene.hpp>
 
 int main()
 {
@@ -59,7 +60,7 @@ int main()
     ludo::sprite::initialise();
 
     ludo::scene_manager::set_current_scene(new ludo::match_scene());
-    // ludo::scene *current_scene = new ludo::test_scene();
+    // ludo::scene_manager::set_current_scene(new ludo::test_scene());
     double mouse_pos_x;
     double mouse_pos_y;
 

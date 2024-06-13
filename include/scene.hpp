@@ -36,7 +36,6 @@ namespace ludo
     class gameobject
     {
     private:
-        ludo::sprite *m_sprite_ptr;
         ludo::scene *m_scene_ptr;
 
     public:
@@ -44,12 +43,11 @@ namespace ludo
         ludo::gameobject *parent;
         std::set<ludo::gameobject *> children_ptrs;
         ludo::transform local_transform;
+        ludo::sprite *sprite_ptr;
 
         gameobject(ludo::scene *_scene);
         ludo::scene *get_scene() const;
         void attach_child_ptr(ludo::gameobject *_child_ptr);    // recommended way to attach children instead of std::set::insert()
-        ludo::sprite *get_sprite_ptr() const;
-        void set_sprite_ptr(ludo::sprite *_sprite_ptr);
         void draw(const glm::mat4 &_global_transform) const;
         virtual ~gameobject();
     };

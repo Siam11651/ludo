@@ -27,7 +27,7 @@ ludo::camera::camera(const ludo::transform &_transform) :
 
 ludo::gameobject::gameobject(ludo::scene *_scene) :
     m_scene_ptr(_scene),
-    m_sprite_ptr(nullptr),
+    sprite_ptr(nullptr),
     parent(nullptr),
     active(true) {}
 
@@ -36,16 +36,6 @@ void ludo::gameobject::attach_child_ptr(ludo::gameobject *_child_ptr)
     children_ptrs.insert(_child_ptr);
 
     _child_ptr->parent = this;
-}
-
-ludo::sprite *ludo::gameobject::get_sprite_ptr() const
-{
-    return m_sprite_ptr;
-}
-
-void ludo::gameobject::set_sprite_ptr(ludo::sprite *_sprite_ptr)
-{
-    m_sprite_ptr = _sprite_ptr;
 }
 
 void ludo::gameobject::draw(const glm::mat4 &_global_transform) const
@@ -63,9 +53,9 @@ void ludo::gameobject::draw(const glm::mat4 &_global_transform) const
     local_transform_mat = glm::scale(local_transform_mat, scale);
     const glm::mat4 new_global_transform = _global_transform * local_transform_mat;
 
-    if(m_sprite_ptr)
+    if(sprite_ptr)
     {
-        m_sprite_ptr->draw(new_global_transform);
+        sprite_ptr->draw(new_global_transform);
     }
 
     for(ludo::gameobject *child_ptr : children_ptrs)

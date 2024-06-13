@@ -22,8 +22,11 @@ namespace ludo
         static GLuint s_element_buffer_object;
         static GLuint s_shader_program;
         static GLuint s_transform_uniform_location;
+        static GLuint s_transparency_uniform_location;
 
     public:
+        float transparency;
+
         sprite();
         sprite(const std::string &_filepath);
         void setup_sprite(const std::string &_filepath);
